@@ -23,7 +23,7 @@ def create_repos(request):
                 if repo['fork']: continue
 
                 if repo['language']:
-                    programming_languages.add(repo['language'].lower())
+                    programming_languages.add(repo['language'].lower().strip())
                 if repo['topics']:
                     for technology in repo['topics']:
                         technologies.add(technology.lower().strip())
@@ -53,16 +53,12 @@ def create_repos(request):
                     defaults=contributor_fields
                 )
 
-            programming_languages = repr(list(programming_languages))
-            if programming_languages != "[]": 
-                programming_languages = None
-            
-            technologies = repr(list(technologies))
-            if technologies == "[]": 
-                technologies = None
+            if len(programming_languages) > 0: 
+                github_account.programming_languages = repr(list(programming_languages))
 
-            github_account.programming_languages = programming_languages
-            github_account.technologies = technologies
+            if len(technologies) > 0: 
+                github_account.technologies = repr(list(technologies))
+
             github_account.save()
 
     return HttpResponse(f'GithubRepo objects: {GithubRepo.objects.count()}\nGithubRepoContributor objects: {GithubRepoContributor.objects.count()}')

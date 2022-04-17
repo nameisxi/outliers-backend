@@ -1,14 +1,27 @@
 import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from rest_framework.generics import ListAPIView
 
 from .models import *
+from .serializers import *
+from .filters import *
 
 
-def get_users(request):
-    pass
+class CandidateList(ListAPIView):
+    # model = Candidate
+    queryset = Candidate.objects.all()
+    serializer_class = CandidateSerializer
+    filterset_class = CandidateFilter
 
-def create_users(request):
+    # def get(self, request):
+    #     queryset = Candidate.objects.all()
+    #     serializer_class = CandidateSerializer
+    #     filterset_class = CandidateFilter
+    #     return JsonResponse(CandidateSerializer(queryset, many=True).data, safe=False)
+
+
+def create_candidates(request):
     with open('./users/users.json', 'r') as f:
         users = json.load(f)
         
