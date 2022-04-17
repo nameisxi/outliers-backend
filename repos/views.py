@@ -14,19 +14,28 @@ def create_repos(request):
         for user_repos in users_repos:
             username = user_repos['username']
             github_account = GithubAccount.objects.get(username=username)
-            programming_languages = set()
-            technologies = set()
+            programming_languages = {}
+            technologies = {}
+            repo_count = 0
 
             repos = user_repos['repos']
 
             for repo in repos:
                 if repo['fork']: continue
+                repo_count += 1
 
                 if repo['language']:
-                    programming_languages.add(repo['language'].lower().strip())
+                    repo_language = repo['language'].lower().strip()
+                    if repo_language not in programming_languages.keys():
+                        programming_languages[repo_language] = 0
+                    programming_languages[repo_language] += 1
+
                 if repo['topics']:
                     for technology in repo['topics']:
-                        technologies.add(technology.lower().strip())
+                        technology = technology.lower().strip()
+                        if technology not in technologies.keys():
+                            technologies[technology] = 0
+                        technologies[technology] += 1
 
                 repo_fields = {
                     'repo_id': repo['id'],
@@ -53,11 +62,11 @@ def create_repos(request):
                     defaults=contributor_fields
                 )
 
-            if len(programming_languages) > 0: 
-                github_account.programming_languages = repr(list(programming_languages))
+            if len(programming_languages.keys()) > 0: 
+                github_account.programming_languages = {k:v/repo_count for k, v in programming_languages.items()}
 
-            if len(technologies) > 0: 
-                github_account.technologies = repr(list(technologies))
+            if len(technologies.keys()) > 0: 
+                github_account.technologies = {k:v/repo_count for k, v in technologies.items()}
 
             github_account.save()
 

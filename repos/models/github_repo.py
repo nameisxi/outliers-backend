@@ -18,3 +18,12 @@ class GithubRepo(BaseModel):
 class GithubRepoContributor(BaseModel):
     account = models.ForeignKey(GithubAccount, on_delete=models.CASCADE)
     repo = models.ForeignKey('GithubRepo', on_delete=models.CASCADE)
+
+
+class GithubRepoLanguage(BaseModel):
+    repo = models.ForeignKey('GithubRepo', on_delete=models.CASCADE)
+    programming_language = models.ForeignKey('ProgrammingLanguage', on_delete=models.CASCADE)
+
+
+class ProgrammingLanguage(BaseModel):
+    name = models.CharField(max_length=255)

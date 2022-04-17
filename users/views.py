@@ -9,16 +9,9 @@ from .filters import *
 
 
 class CandidateList(ListAPIView):
-    # model = Candidate
     queryset = Candidate.objects.all()
     serializer_class = CandidateSerializer
     filterset_class = CandidateFilter
-
-    # def get(self, request):
-    #     queryset = Candidate.objects.all()
-    #     serializer_class = CandidateSerializer
-    #     filterset_class = CandidateFilter
-    #     return JsonResponse(CandidateSerializer(queryset, many=True).data, safe=False)
 
 
 def create_candidates(request):
