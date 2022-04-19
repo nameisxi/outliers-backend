@@ -15,34 +15,53 @@ class CandidateList(ListAPIView):
 
 
 def create_candidates(request):
-    with open('./users/users.json', 'r') as f:
+    with open('./users/users_v2.json', 'r') as f:
         users = json.load(f)
         
         for user in users:
-            candidate, _ = Candidate.objects.get_or_create(github_account__user_id=user['id'])
+            candidate_defaults = {
+                'name': user['name'],
+                'location': user['location'],
+                'email': user['email'],
+                'github_url': user['html_url'],
+                'linkedin_url': None,
+                'website_url': user['blog'],
+                'years_of_experience': None,
+                'current_title': None,
+                'current_employer': user['company'],
+                'university': None,
+                'work_score': None,
+                'popularity_score': None,
+                'hireability_score': None,
+            }
+            candidate, _ = Candidate.objects.get_or_create(
+                github_account__user_id=user['id'],
+                defaults=candidate_defaults
+            )
 
-            fields = {
+            github_account_defaults = {
                 'owner': candidate,
                 'user_id': user['id'],
                 'username': user['login'],
                 'name': user['name'],
-                'email': user['email'],
                 'location': user['location'],
-                'company': user['company'],
+                'email': user['email'],
                 'website': user['blog'],
-                'twitter_username': user['twitter_username'],
-                'followers': user['followers'],
+                'company': user['company'],
                 'hireable': user['hireable'],
+                'programming_languages': None,
+                'technologies_and_topics': None,
                 'repos_count': user['public_repos'],
                 'gists_count': user['public_gists'],
+                'contributions_count': user['contributions_count'],
+                'followers_count': user['followers'],
+                'following_count': user['following'],
                 'profile_html_url': user['html_url'],
                 'profile_api_url': user['url'],
-                
             }
-
             GithubAccount.objects.update_or_create(
                 user_id=user['id'],
-                defaults=fields
+                defaults=github_account_defaults
             )
 
     

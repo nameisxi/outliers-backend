@@ -1,29 +1,28 @@
 from django.db import models
 
 from .base_model import BaseModel
+from .github_topic import GithubTopic
+from .github_programming_language import GithubProgrammingLanguage
 from users.models import GithubAccount
 
 
 class GithubRepo(BaseModel):
     repo_id = models.BigIntegerField()
     name = models.CharField(max_length=255)
+
+    main_language = models.ManyToManyField(GithubProgrammingLanguage)
+    technologies_and_topics = models.ManyToManyField(GithubTopic)
+
     stargazers_count = models.IntegerField()
     forks_count = models.IntegerField()
-    main_language = models.CharField(max_length=255, null=True)
-    topics = models.TextField(null=True)
+    watchers_count = models.IntegerField()
+
+    size_in_kilobytes = models.BigIntegerField()
+
     repo_html_url = models.CharField(max_length=255)
     repo_api_url = models.CharField(max_length=255)
 
 
 class GithubRepoContributor(BaseModel):
-    account = models.ForeignKey(GithubAccount, on_delete=models.CASCADE)
+    account = models.ForeignKey(GithubAccount, related_name='contributions', on_delete=models.CASCADE)
     repo = models.ForeignKey('GithubRepo', on_delete=models.CASCADE)
-
-
-class GithubRepoLanguage(BaseModel):
-    repo = models.ForeignKey('GithubRepo', on_delete=models.CASCADE)
-    programming_language = models.ForeignKey('ProgrammingLanguage', on_delete=models.CASCADE)
-
-
-class ProgrammingLanguage(BaseModel):
-    name = models.CharField(max_length=255)

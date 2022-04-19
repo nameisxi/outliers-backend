@@ -3,7 +3,7 @@ import json
 from django.http import HttpResponse
 from django.db.models import Count
 
-from .models import GithubRepo, GithubRepoContributor
+from .models import *
 from users.models import GithubAccount
 
 
@@ -14,43 +14,37 @@ def create_repos(request):
         for user_repos in users_repos:
             username = user_repos['username']
             github_account = GithubAccount.objects.get(username=username)
-            programming_languages = {}
-            technologies = {}
-            repo_count = 0
 
-            repos = user_repos['repos']
-
-            for repo in repos:
+            for repo in user_repos['repos']:
                 if repo['fork']: continue
-                repo_count += 1
-
-                if repo['language']:
-                    repo_language = repo['language'].lower().strip()
-                    if repo_language not in programming_languages.keys():
-                        programming_languages[repo_language] = 0
-                    programming_languages[repo_language] += 1
-
-                if repo['topics']:
-                    for technology in repo['topics']:
-                        technology = technology.lower().strip()
-                        if technology not in technologies.keys():
-                            technologies[technology] = 0
-                        technologies[technology] += 1
-
+                
                 repo_fields = {
                     'repo_id': repo['id'],
                     'name': repo['name'],
                     'stargazers_count': repo['stargazers_count'],
                     'forks_count': repo['forks_count'], 
-                    'main_language': repo['language'],
-                    'topics': repo['topics'],
+                    'watchers_count': repo['watchers_count'], 
+                    'size_in_kilobytes': repo['size'], 
                     'repo_html_url': repo['html_url'],
                     'repo_api_url': repo['url'],
                 }
-                github_repo, _ = GithubRepo.objects.update_or_create(
+                github_repo, _ = GithubRepo.objects.get_or_create(
                     repo_id=repo['id'],
                     defaults=repo_fields
                 )
+
+                if repo['language']:
+                    repo_language = repo['language'].lower().strip()
+                    programming_language, _ = GithubProgrammingLanguage.objects.get_or_create(name=repo_language)
+                    github_repo.main_language.add(programming_language)
+
+                if repo['topics']:
+                    for technology in repo['topics']:
+                        technology = technology.lower().strip()
+                        topic, _ = GithubTopic.objects.get_or_create(name=technology)
+                        github_repo.technologies_and_topics.add(topic)
+
+                github_repo.save()
 
                 contributor_fields = {
                     'account': github_account,
@@ -61,14 +55,6 @@ def create_repos(request):
                     account__username=username,
                     defaults=contributor_fields
                 )
-
-            if len(programming_languages.keys()) > 0: 
-                github_account.programming_languages = {k:v/repo_count for k, v in programming_languages.items()}
-
-            if len(technologies.keys()) > 0: 
-                github_account.technologies = {k:v/repo_count for k, v in technologies.items()}
-
-            github_account.save()
 
     return HttpResponse(f'GithubRepo objects: {GithubRepo.objects.count()}\nGithubRepoContributor objects: {GithubRepoContributor.objects.count()}')
 
