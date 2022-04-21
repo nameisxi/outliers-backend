@@ -30,12 +30,13 @@ def create_candidates(request):
                 'current_title': None,
                 'current_employer': user['company'],
                 'university': None,
-                'work_score': None,
-                'popularity_score': None,
-                'hireability_score': None,
+                'work_score': -1,
+                'popularity_score': -1,
+                'hireability_score': -1,
+                'fit_score': -1,
             }
-            candidate, _ = Candidate.objects.get_or_create(
-                github_account__user_id=user['id'],
+            candidate, _ = Candidate.objects.update_or_create(
+                github_accounts__user_id=user['id'],
                 defaults=candidate_defaults
             )
 
@@ -49,13 +50,16 @@ def create_candidates(request):
                 'website': user['blog'],
                 'company': user['company'],
                 'hireable': user['hireable'],
-                'programming_languages': None,
-                'technologies_and_topics': None,
                 'repos_count': user['public_repos'],
+                'normalized_repos_count': -1,
                 'gists_count': user['public_gists'],
+                'normalized_gists_count': -1,
                 'contributions_count': user['contributions_count'],
+                'normalized_contributions_count': -1,
                 'followers_count': user['followers'],
-                'following_count': user['following'],
+                'normalized_followers_count': -1,
+                'followers_following_counts_difference': user['followers'] - user['following'],
+                'normalized_followers_following_counts_difference': -1,
                 'profile_html_url': user['html_url'],
                 'profile_api_url': user['url'],
             }

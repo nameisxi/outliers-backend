@@ -10,7 +10,7 @@ class GithubAccountSerializer(serializers.ModelSerializer):
 
     
 class CandidateSerializer(serializers.ModelSerializer):
-    github_account = GithubAccountSerializer(many=True, read_only=True)
+    github_accounts = GithubAccountSerializer(many=True, read_only=True)
 
     class Meta:
         model = Candidate

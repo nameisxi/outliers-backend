@@ -14,10 +14,14 @@ class GithubRepo(BaseModel):
     technologies_and_topics = models.ManyToManyField(GithubTopic)
 
     stargazers_count = models.IntegerField()
+    normalized_stargazers_count = models.FloatField()
     forks_count = models.IntegerField()
+    normalized_forks_count = models.FloatField()
     watchers_count = models.IntegerField()
+    normalized_watchers_count = models.FloatField()
 
     size_in_kilobytes = models.BigIntegerField()
+    normalized_size_in_kilobytes = models.FloatField()
 
     repo_html_url = models.CharField(max_length=255)
     repo_api_url = models.CharField(max_length=255)

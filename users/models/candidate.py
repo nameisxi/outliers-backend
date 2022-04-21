@@ -19,6 +19,7 @@ class Candidate(BaseModel):
     # programming_languages = models.ManyToManyField()
     # technologies_and_topics = models.ManyToManyField()
 
-    work_score = models.FloatField(null=True)
-    popularity_score = models.FloatField(null=True)
-    hireability_score = models.FloatField(null=True)
+    work_score = models.FloatField()
+    popularity_score = models.FloatField()
+    hireability_score = models.FloatField()
+    fit_score = models.FloatField()
