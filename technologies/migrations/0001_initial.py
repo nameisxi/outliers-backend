@@ -12,25 +12,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Candidate',
+            name='ProgrammingLanguage',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('name', models.CharField(max_length=255, null=True)),
-                ('location', models.CharField(max_length=255, null=True)),
-                ('email', models.CharField(max_length=255, null=True)),
-                ('github_url', models.CharField(max_length=255, null=True)),
-                ('linkedin_url', models.CharField(max_length=255, null=True)),
-                ('website_url', models.CharField(max_length=255, null=True)),
-                ('years_of_experience', models.IntegerField(null=True)),
-                ('current_title', models.CharField(max_length=255, null=True)),
-                ('current_employer', models.CharField(max_length=255, null=True)),
-                ('university', models.CharField(max_length=255, null=True)),
-                ('work_score', models.FloatField()),
-                ('popularity_score', models.FloatField()),
-                ('hireability_score', models.FloatField()),
-                ('fit_score', models.FloatField()),
+                ('name', models.CharField(max_length=255)),
             ],
             options={
                 'ordering': ['-created_at'],
@@ -38,11 +25,25 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Company',
+            name='Technology',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
+                ('name', models.CharField(max_length=255)),
+            ],
+            options={
+                'ordering': ['-created_at'],
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='Topic',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('name', models.CharField(max_length=255)),
             ],
             options={
                 'ordering': ['-created_at'],

@@ -1,8 +1,8 @@
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Avg
 
-from users.models import Candidate, GithubAccount
-from repos.models import GithubRepo
+from users.models import Candidate
+from github.models import GithubAccount, GithubRepo
 
 from .src.normalizer import Normalizer
 from .src.scorer import Scorer
@@ -66,8 +66,12 @@ def get_distributions(request):
                 'normalized_forks_count': list(GithubRepo.objects.all().values_list('normalized_forks_count', flat=True)),
                 'watchers_count': list(GithubRepo.objects.all().values_list('watchers_count', flat=True)),
                 'normalized_watchers_count': list(GithubRepo.objects.all().values_list('normalized_watchers_count', flat=True)),
+                'programming_languages_count': list(GithubRepo.objects.all().values_list('programming_languages_count', flat=True)),
+                'normalized_programming_languages_count': list(GithubRepo.objects.all().values_list('normalized_programming_languages_count', flat=True)),
             },
     }
 
     return JsonResponse(distributions)
 
+def get_score(request, github_username):
+    return JsonResponse(Candidate.objects.get(github_accounts__username=github_username))

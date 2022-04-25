@@ -23,3 +23,6 @@ class Candidate(BaseModel):
     popularity_score = models.FloatField()
     hireability_score = models.FloatField()
     fit_score = models.FloatField()
+
+    # profile = models.OneToOneField()
+    # pre_profile = models.OneToOneField()
