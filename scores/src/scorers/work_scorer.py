@@ -12,10 +12,10 @@ class WorkScorer:
         Scores a given candidate's Github profile based on the quantity, or the amount, of their previous work.
         """
         normalized_repos_count = github_account.normalized_repos_count
-        normalized_gists_count = github_account.normalized_gists_count
+        # normalized_gists_count = github_account.normalized_gists_count
         normalized_contributions_count = github_account.normalized_contributions_count
         
-        work_quantity_score = self._average([normalized_repos_count, normalized_gists_count, normalized_contributions_count])
+        work_quantity_score = self._average([normalized_repos_count, normalized_contributions_count])
 
         return work_quantity_score
 
@@ -26,9 +26,9 @@ class WorkScorer:
         normalized_average_repo_loc = 0
         normalized_average_repo_filesize = self._average([c.repo.normalized_size_in_kilobytes for c in github_account.contributions.all()])
         normalized_average_repo_collaborators_count = 0
-        # normalized_average_repo_language_count = self._average([c.repo.normalized_programming_languages_count for c in github_account.contributions.all()])
-        
-        work_complexity_score = self._average([normalized_average_repo_filesize]) 
+        normalized_average_repo_language_count = self._average([c.repo.normalized_programming_languages_count for c in github_account.contributions.all()])
+
+        work_complexity_score = self._average([normalized_average_repo_filesize, normalized_average_repo_language_count]) 
 
         return work_complexity_score
 

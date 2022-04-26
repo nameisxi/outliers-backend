@@ -1,7 +1,7 @@
 import django_filters as filters
 
 from ..models import *
-from github.models import ProgrammingLanguage
+from technologies.models import ProgrammingLanguage, Technology, Topic
 
 
 class  CandidateFilter(filters.FilterSet):
@@ -17,4 +17,22 @@ class  CandidateFilter(filters.FilterSet):
     # class Meta:
     #     model = Candidate
     #     fields = ['programming_languages', 'technologies']
-    pass
+    
+    language_choices = [(language, language) for language in ProgrammingLanguage.objects.values_list('name', flat=True).distinct()]
+    language_filter = filters.MultipleChoiceFilter(
+        field_name='programming_languages__language__name',
+        lookup_expr='icontains',
+        conjoined=True,
+        choices=language_choices,
+    )
+
+    class Meta:
+        model = Candidate
+        exclude = ['work_score', 'popularity_score', 'hireability_score', 'fit_score']
+    
+    @property
+    def qs(self):
+        queryset = super().qs
+        print("Queryset length:", len(queryset))
+
+    # pass

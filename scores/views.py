@@ -19,6 +19,7 @@ def calculate_scores(request):
         ],
         GithubRepo: [
             'size_in_kilobytes',
+            'programming_languages_count',
             'stargazers_count',
             'forks_count',
             'watchers_count',
@@ -60,14 +61,14 @@ def get_distributions(request):
             'GithubRepo': {
                 'size_in_kilobytes': list(GithubRepo.objects.all().values_list('size_in_kilobytes', flat=True)),
                 'normalized_size_in_kilobytes': list(GithubRepo.objects.all().values_list('normalized_size_in_kilobytes', flat=True)),
+                'programming_languages_count': list(GithubRepo.objects.all().values_list('programming_languages_count', flat=True)),
+                'normalized_programming_languages_count': list(GithubRepo.objects.all().values_list('normalized_programming_languages_count', flat=True)),
                 'stargazers_count': list(GithubRepo.objects.all().values_list('stargazers_count', flat=True)),
                 'normalized_stargazers_count': list(GithubRepo.objects.all().values_list('normalized_stargazers_count', flat=True)),
                 'forks_count': list(GithubRepo.objects.all().values_list('forks_count', flat=True)),
                 'normalized_forks_count': list(GithubRepo.objects.all().values_list('normalized_forks_count', flat=True)),
                 'watchers_count': list(GithubRepo.objects.all().values_list('watchers_count', flat=True)),
                 'normalized_watchers_count': list(GithubRepo.objects.all().values_list('normalized_watchers_count', flat=True)),
-                'programming_languages_count': list(GithubRepo.objects.all().values_list('programming_languages_count', flat=True)),
-                'normalized_programming_languages_count': list(GithubRepo.objects.all().values_list('normalized_programming_languages_count', flat=True)),
             },
     }
 

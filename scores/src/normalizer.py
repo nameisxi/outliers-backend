@@ -8,12 +8,12 @@ class Normalizer:
         pass
 
     def _transform_distribution(self, distribution):
-        transformer = QuantileTransformer(output_distribution='normal')
+        transformer = QuantileTransformer(output_distribution='normal', random_state=42)
         transformer = transformer.fit(distribution)
         return transformer.transform(distribution), transformer
 
     def _scale_distribution(self, distribution):
-        scaler = MinMaxScaler()
+        scaler = MinMaxScaler(feature_range=(-1,1))
         scaler = scaler.fit(distribution)
         return scaler.transform(distribution), scaler
 
