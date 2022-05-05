@@ -8,6 +8,7 @@ from .src.normalizer import Normalizer
 from .src.scorer import Scorer
 
 
+#TODO refactor
 def calculate_scores(request):
     objects_and_fields = {
         GithubAccount: [

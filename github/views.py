@@ -148,6 +148,7 @@ def create_github_repos(request):
     return HttpResponse(f'GithubRepo objects: {GithubRepo.objects.count()}\nGithubRepoContributor objects: {GithubRepoContributor.objects.count()}')
 
 def add_programming_languages(request):
+    updated_repos = 
     with open('./github/data/languages/languages_v2.json', 'r') as f:
         repos = json.load(f)
 
@@ -224,21 +225,11 @@ def add_programming_languages_counts(request):
     return HttpResponse('Completed')
 
 
-def get_repos_with_common_contributors(request):
-    common_repos = []
-    counts = GithubRepo.objects.annotate(number_of_common_collaborators=Count('githubrepocontributor'))
-
-    for count in counts:
-        if count.number_of_common_collaborators > 1:
-            common_repos.append(count.name)
-
-    return HttpResponse(f'{common_repos}, {len(common_repos)}')
-
-def get_contact_details(request):
-    emails = list(GithubAccount.objects.all().values_list('email', flat=True))
-    websites = list(GithubAccount.objects.all().values_list('website', flat=True))
-
-    return JsonResponse({
-        'emails': emails,
-        'websites': websites,
-    })
+def populate(request):
+    # create_github_accounts()
+    # create_github_repos()
+    # add_programming_languages()
+    # add_repo_programming_languages_counts()
+    # add_account_programming_languages_shares()
+    # add_account_topics_shares()
+    pass
