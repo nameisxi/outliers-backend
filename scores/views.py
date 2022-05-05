@@ -8,8 +8,10 @@ from .src.normalizer import Normalizer
 from .src.scorer import Scorer
 
 
-#TODO refactor
-def calculate_scores(request):
+def compute(request):
+    """
+    Executes the ranking score computation pipeline.
+    """
     objects_and_fields = {
         GithubAccount: [
             'repos_count',
@@ -27,9 +29,11 @@ def calculate_scores(request):
         ],
     }
 
+    # Normalize given objects' fields
     normalizer = Normalizer()
     normalizer._normalize_fields(objects_and_fields)
 
+    # Compute ranking scores for Candidate objects
     scorer = Scorer()
     scorer.compute_scores()
 
@@ -40,6 +44,9 @@ def calculate_scores(request):
     return HttpResponse(f'Work score avg: {avg_work_score}, Popularity score avg: {avg_popularity_score}, Hireability score avg: {avg_hireability_score}, Fit score avg: {avg_fit_score}')
 
 def get_distributions(request):
+    """
+    Returns the distributions and the normalized versions of those distributions of the fields used to compute the ranking scores.
+    """
     distributions = {
             'Candidate': {
                 'work_score': list(Candidate.objects.all().values_list('work_score', flat=True)),
