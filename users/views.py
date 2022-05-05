@@ -8,6 +8,9 @@ from .filters import *
 
 
 class CandidateList(ListAPIView):
+    """
+    Returns a list of Candidate objects matching given filters.
+    """
     queryset = Candidate.objects.annotate(
         name=Case(
             When(github_accounts__name__isnull=False, then='github_accounts__name'),
