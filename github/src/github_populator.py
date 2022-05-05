@@ -29,7 +29,7 @@ class GithubPopulator:
 
     def create_github_programming_languages(self):
         """
-        Opens a JSON file containing list of repo IDs and those repos programming languages from Github REST API. The data will get passed to GithubMetadataCreator that saves the data into the database.
+        Opens a JSON file containing list of repo IDs and those repos' programming languages from Github REST API. The data will get passed to GithubMetadataCreator that saves the data into the database.
         """
         with open('./github/data/languages/languages_v2.json', 'r') as f:
             repos = json.load(f)
