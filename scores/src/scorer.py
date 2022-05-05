@@ -11,6 +11,9 @@ class Scorer:
         self._fit_scorer = FitScorer()
 
     def compute_scores(self):
+        """
+        Computes ranking scores for every Candidate object.
+        """
         for candidate in Candidate.objects.all():
             candidate.work_score = self._work_scorer.calculate_work_score(candidate)
             candidate.popularity_score = self._popularity_scorer.calculate_popularity_score(candidate)

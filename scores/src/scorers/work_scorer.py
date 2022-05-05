@@ -5,6 +5,9 @@ class WorkScorer:
         pass
 
     def _average(self, list):
+        """
+        Calculates a mathematical average for a given list.
+        """
         return sum(list) / len(list)
 
     def _calculate_work_quantity_score(self, github_account):
@@ -54,6 +57,9 @@ class WorkScorer:
         return 0
 
     def calculate_work_score(self, candidate):
+        """
+        Calculates a work score for a given Candidate object.
+        """
         work_scores = []
 
         for github_account in candidate.github_accounts.all():
