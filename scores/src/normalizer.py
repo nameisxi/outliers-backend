@@ -4,11 +4,10 @@ from sklearn.preprocessing import QuantileTransformer, MinMaxScaler
 
 class Normalizer:
     def __init__(self):
-        # TODO: add random state to transformers and scalers
-        pass
+        self._random_state = 42
 
     def _transform_distribution(self, distribution):
-        transformer = QuantileTransformer(output_distribution='normal', random_state=42)
+        transformer = QuantileTransformer(output_distribution='normal', random_state=self._random_state)
         transformer = transformer.fit(distribution)
         return transformer.transform(distribution), transformer
 
