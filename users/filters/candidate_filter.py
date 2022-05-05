@@ -4,16 +4,6 @@ from ..models import *
 
 
 class CandidateFilter(filters.FilterSet):
-
-
-    # technology_choices = [(technology, technology) for technology in Technology.objects.values_list('name', flat=True).distinct()]
-    # technology = filters.MultipleChoiceFilter(
-    #     field_name='github_accounts__technologies__technology__name',
-    #     lookup_expr='icontains',
-    #     conjoined=False,
-    #     choices=technology_choices,
-    # )
-
     class Meta:
         model = Candidate
         exclude = ['created_at', 'updated_at', 'work_score', 'popularity_score', 'hireability_score', 'fit_score']
