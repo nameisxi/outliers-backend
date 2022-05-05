@@ -7,11 +7,17 @@ class Normalizer:
         self._random_state = 42
 
     def _transform_distribution(self, distribution):
+        """
+        Transforms a given distribution using quantile transformation.
+        """
         transformer = QuantileTransformer(output_distribution='normal', random_state=self._random_state)
         transformer = transformer.fit(distribution)
         return transformer.transform(distribution), transformer
 
     def _scale_distribution(self, distribution):
+        """
+        Scales a given distribution using min max scaling (range -1.0 to 1.0).
+        """
         scaler = MinMaxScaler(feature_range=(-1,1))
         scaler = scaler.fit(distribution)
         return scaler.transform(distribution), scaler
@@ -19,8 +25,8 @@ class Normalizer:
     def _normalize_fields(self, objects_and_fields):
         """
         Normalizes given objects fields in two steps:
-            1: Transform every field's values distribution into quantiles
-            2: Scale every field's quantile distribution's between 0.0 and 1.0
+            1: Transform every field's values distribution into quantile distribution
+            2: Scale every field's quantile distribution to the range of -1.0 to 1.0
         """
 
         for model_object, fields in objects_and_fields.items():
