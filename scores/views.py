@@ -73,6 +73,3 @@ def get_distributions(request):
     }
 
     return JsonResponse(distributions)
-
-def get_score(request, github_username):
-    return JsonResponse(Candidate.objects.get(github_accounts__username=github_username))
