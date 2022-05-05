@@ -6,5 +6,5 @@ from ..models import *
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topic
-        fields = '__all__'
+        fields = ['name']
         

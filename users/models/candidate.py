@@ -26,3 +26,6 @@ class Candidate(BaseModel):
  
     # profile = models.OneToOneField()
     # pre_profile = models.OneToOneField()
+
+    class Meta:
+        ordering = ['-work_score']

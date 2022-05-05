@@ -20,5 +20,6 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('github/', include('github.urls')),
     path('scores/', include('scores.urls')),
+    path('technologies/', include('technologies.urls')),
     path('admin/', admin.site.urls),
 ]

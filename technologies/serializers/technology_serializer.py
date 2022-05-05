@@ -6,5 +6,5 @@ from ..models import *
 class TechnologySerializer(serializers.ModelSerializer):
     class Meta:
         model = Technology
-        fields = '__all__'
+        fields = ['name']
         

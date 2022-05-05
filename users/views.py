@@ -8,38 +8,6 @@ from .filters import *
 
 
 class CandidateList(ListAPIView):
-    # query = """
-    # SELECT 
-    #     CASE
-    #         WHEN github_githubaccount.name IS NOT NULL THEN github_githubaccount.name
-    #     END CASE AS name,
-
-    #     CASE
-    #         WHEN github_githubaccount.location IS NOT NULL THEN github_githubaccount.location
-    #     END CASE AS location,
-
-    #     CASE
-    #         WHEN github_githubaccount.email IS NOT NULL THEN github_githubaccount.email
-    #     END CASE AS email,
-
-    #     github_githubaccount.profile_html_url AS github_url,
-
-    #     CASE
-    #         WHEN github_githubaccount.website LIKE '%linkedin%' THEN github_githubaccount.website
-    #     END CASE AS linkedin_url,
-
-    #     CASE
-    #         WHEN github_githubaccount.website IS NOT NULL AND NOT LIKE '%linkedin%' THEN github_githubaccount.website
-    #     END CASE AS website_url,
-
-    #     CASE
-    #         WHEN github_githubaccount.company IS NOT NULL THEN github_githubaccount.company
-    #     END CASE AS current_employer
-
-    # FROM users_candidate
-    # LEFT JOIN github_githubaccount 
-    # ON user_candidate.id = 
-    # """
     queryset = Candidate.objects.annotate(
         name=Case(
             When(github_accounts__name__isnull=False, then='github_accounts__name'),
@@ -69,8 +37,18 @@ class CandidateList(ListAPIView):
     )
 
     serializer_class = CandidateSerializer
-    # filterset_class = CandidateFilter
+    filterset_class = CandidateFilter
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if 'language' in self.request.query_params.keys():
+            languages = self.request.query_params.getlist('language')
+            for language in languages:
+                queryset = queryset.filter(github_accounts__programming_languages__language__name=language, github_accounts__programming_languages__language_share__gte=0.1)
 
-def users_languages(request):
-    return 
+        if 'topic' in self.request.query_params.keys():
+            topics = self.request.query_params.getlist('topic')
+            for topic in topics:
+                queryset = queryset.filter(github_accounts__topics__topic__name=topic, github_accounts__topics__topic_share__gte=0.1)
+
+        return queryset

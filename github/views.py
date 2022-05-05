@@ -1,7 +1,7 @@
 import json
 
 from django.http import HttpResponse, JsonResponse
-from django.db.models import Count
+from django.db.models import Count, Sum
 
 from .models import *
 from users.models import Candidate
@@ -135,6 +135,15 @@ def create_github_repos(request):
                                 'topic': topic,
                             }
                         )
+                        GithubAccountTopic.objects.update_or_create(
+                            account=github_account,
+                            topic=topic, 
+                            defaults={
+                                'account': github_account,
+                                'topic': topic,
+                                'topic_share': -1,
+                            }
+                        )
 
     return HttpResponse(f'GithubRepo objects: {GithubRepo.objects.count()}\nGithubRepoContributor objects: {GithubRepoContributor.objects.count()}')
 
@@ -154,6 +163,7 @@ def add_programming_languages(request):
                     continue
 
                 for language, language_contributions_count in repo_languages_object.items():
+                    # TODO: if language_contribution_count, e.g. contribution filesize, < x, skip?
                     if language_contributions_count == 0:
                         continue
 
@@ -179,6 +189,7 @@ def add_programming_languages(request):
                             defaults={
                                 'account': contributor.account,
                                 'language': programming_language,
+                                'language_share': -1,
                             }
                         )
 
@@ -186,11 +197,29 @@ def add_programming_languages(request):
 
 def add_programming_languages_counts(request):
     repos = GithubRepo.objects.all()
-
     for repo in repos:
         repo.programming_languages_count = repo.programming_languages.all().count()
     
     GithubRepo.objects.bulk_update(repos, ['programming_languages_count'])
+
+    account_languages = GithubAccountLanguage.objects.all()
+    for account_language in account_languages:
+        all_contributions = account_language.account.contributions.aggregate(models.Sum('repo__programming_languages__language_share'))['repo__programming_languages__language_share__sum']
+        language_contributions = account_language.account.contributions.filter(repo__programming_languages__language=account_language.language).aggregate(models.Sum('repo__programming_languages__language_share'))['repo__programming_languages__language_share__sum']
+        
+        account_language.language_share = language_contributions / all_contributions
+    
+    GithubAccountLanguage.objects.bulk_update(account_languages, ['language_share'])
+
+    account_topics = GithubAccountTopic.objects.all()
+    for account_topic in account_topics:
+        repos_count = account_topic.account.repos_count
+        if repos_count == 0: continue
+        topic_count = account_topic.account.contributions.filter(repo__topics__topic=account_topic.topic).count()
+        
+        account_topic.topic_share = topic_count / repos_count
+    
+    GithubAccountTopic.objects.bulk_update(account_topics, ['topic_share'])
 
     return HttpResponse('Completed')
 
