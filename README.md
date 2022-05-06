@@ -4,7 +4,9 @@ Outliers helps startups find engineering leads using openly available data from 
 
 # Requirements
 
-Python >= 3.6
+- Python >= 3.6
+- PostgreSQL
+
 
 # Setup
 
@@ -15,9 +17,22 @@ Python >= 3.6
 > pip3 install -r requirements.txt
 ```
 
-2. Create a .env file and add configurations to it:
+2. Create a .env file:
 ```
 > touch .env
+```
+
+And add the following configurations to it:
+```
+# Django configs
+SECRET_KEY=[Ask from Tuomas]
+
+# DB configs
+DATABASE_DEFAULT_NAME=mydbname
+DATABASE_DEFAULT_USER=mydbusername
+DATABASE_DEFAULT_PASSWORD=mydbpassword
+DATABASE_DEFAULT_HOST=127.0.0.1
+DATABASE_DEFAULT_PORT=5432
 ```
 
 3. Run Django DB migrations:
