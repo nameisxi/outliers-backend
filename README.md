@@ -63,3 +63,9 @@ Run tests:
 ```
 
 The command automatically generates an HTML coverage report that can be found in `cover/`
+
+# Documentation
+
+- [Architecture doc](https://github.com/nameisxi/outliers-backend/blob/main/documentation/architecture.md)
+- [Testing doc](https://github.com/nameisxi/outliers-backend/blob/main/documentation/testing.md)
+- [Tuntikirjanpito](https://github.com/nameisxi/outliers-backend/blob/main/documentation/tuntikirjanpito.md)
