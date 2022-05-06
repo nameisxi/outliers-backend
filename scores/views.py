@@ -30,7 +30,7 @@ def compute(request):
 
     # Normalize given objects' fields
     normalizer = Normalizer()
-    normalizer._normalize_fields(objects_and_fields)
+    normalizer.normalize_fields(objects_and_fields)
 
     # Compute ranking scores for Candidate objects
     scorer = Scorer()

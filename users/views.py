@@ -1,7 +1,8 @@
-from django.db.models import Case, Value, When, F, Q, Subquery
-from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Case, When, F, Q
 from rest_framework.generics import ListAPIView
 
+from github.views import populate
+from scores.views import compute
 from .models import *
 from .serializers import *
 from .filters import *
@@ -41,3 +42,9 @@ class CandidateList(ListAPIView):
 
     serializer_class = CandidateSerializer
     filterset_class = CandidateFilter
+
+# def initialize(request):
+#     # Populate database with Github data
+#     populate()
+#     # Compute ranking scores for Candidate objects
+#     compute()

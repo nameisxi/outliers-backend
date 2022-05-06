@@ -27,6 +27,9 @@ class WorkScorer:
         """
         Scores a given candidate's Github profile based on the complexity of their previous work.
         """
+        if github_account.contributions.all().count() == 0:
+            return [0]
+            
         normalized_average_repo_loc = 0
         normalized_average_repo_filesize = self._average([c.repo.normalized_size_in_kilobytes for c in github_account.contributions.all()])
         normalized_average_repo_collaborators_count = 0
@@ -41,6 +44,9 @@ class WorkScorer:
         """
         Scores a given candidate's Github profile based on the impact of their previous work.
         """
+        if github_account.contributions.all().count() == 0:
+            return [0]
+
         normalized_average_repo_stargazers_count = self._average([c.repo.normalized_stargazers_count for c in github_account.contributions.all()])
         normalized_average_repo_forks_count = self._average([c.repo.normalized_forks_count for c in github_account.contributions.all()])
         normalized_average_repo_watchers_count = self._average([c.repo.normalized_watchers_count for c in github_account.contributions.all()])

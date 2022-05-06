@@ -22,7 +22,7 @@ class Normalizer:
         scaler = scaler.fit(distribution)
         return scaler.transform(distribution), scaler
 
-    def _normalize_fields(self, objects_and_fields):
+    def normalize_fields(self, objects_and_fields):
         """
         Normalizes given objects fields in two steps:
             1: Transform every field's values distribution into quantile distribution

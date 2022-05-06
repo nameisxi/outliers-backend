@@ -25,10 +25,10 @@ class GithubAccountCreator:
             candidate, _ = Candidate.objects.update_or_create(
                 github_accounts__user_id=user['id'],
                 defaults={
-                    'work_score': -1,
-                    'popularity_score': -1,
-                    'hireability_score': -1,
-                    'fit_score': -1,
+                    'work_score': -2,
+                    'popularity_score': -2,
+                    'hireability_score': -2,
+                    'fit_score': -2,
                 }
             )
 

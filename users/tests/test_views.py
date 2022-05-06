@@ -1,6 +1,6 @@
 import json
 
-from rest_framework.test import APITestCase, APIRequestFactory, APIClient
+from rest_framework.test import APITestCase, APIRequestFactory
 
 from github.models import GithubAccount, GithubAccountLanguage, GithubAccountTopic
 from technologies.models import ProgrammingLanguage, Topic
