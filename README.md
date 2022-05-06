@@ -41,8 +41,11 @@ DATABASE_DEFAULT_PORT=5432
 > python3 manage.py migrate
 ```
 
-4. Populate the database with data by visiting the /github/populate endpoint:<br>
+4. Populate the database with data by visiting the /github/populate/ endpoint:<br>
 [http://localhost:8000/github/populate](http://localhost:8000/github/populate)
+
+5. Compute ranking scores for Candidate objects by visiting the /scores/compute/ endpoint:<br>
+[http://localhost:8000/scores/compute/](http://localhost:8000/scores/compute/)
 
 
 # Run
