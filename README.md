@@ -6,7 +6,7 @@ Outliers helps startups find engineering leads using openly available data from 
 
 Python >= 3.6
 
-# Run
+# Setup
 
 Install dependencies:
 ```
@@ -24,8 +24,16 @@ Run Django DB migrations:
 > python3 manage.py migrate
 ```
 
+# Run
+
 Run the backend in localhost:8000/:
 ```
 > python3 manage.py runserver
 ```
 
+# Testing
+
+Run tests:
+```
+> python3 manage.py test
+```
