@@ -15,7 +15,7 @@ class GithubPopulator:
         """
         Opens a JSON file containing Github user accounts from Github REST API. The data will get passed to GithubAccountCreator that saves the data into the database.
         """
-        with open('./github/data/users/users_v3.json', 'r') as f:
+        with open('./github/data/users/example_users_v3.json', 'r') as f:
             users = json.load(f)
             self._github_account_creator.create_accounts(users)
 
@@ -23,7 +23,7 @@ class GithubPopulator:
         """
         Opens a JSON file containing Github repos from Github REST API. The data will get passed to GithubRepoCreator that saves the data into the database.
         """
-        with open('./github/data/repos/repos_v3.json', 'r') as f:
+        with open('./github/data/repos/example_repos_v3.json', 'r') as f:
             repos = json.load(f)
             self._github_repo_creator.create_repos(repos)
 
@@ -31,7 +31,7 @@ class GithubPopulator:
         """
         Opens a JSON file containing list of repo IDs and those repos' programming languages from Github REST API. The data will get passed to GithubMetadataCreator that saves the data into the database.
         """
-        with open('./github/data/languages/languages_v2.json', 'r') as f:
+        with open('./github/data/languages/example_languages_v2.json', 'r') as f:
             repos = json.load(f)
             self._github_metadata_creator.create_programming_languages(repos)
 
