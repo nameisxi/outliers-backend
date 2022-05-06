@@ -1,6 +1,6 @@
 # Architecture doc
 
-![Alt text](https://raw.githubusercontent.com/nameisxi/outliers-backend/bed1515fc56ea4a86caff551b48ece7e7bd9a645/documentation/architecture-diagram.svg?token=AIGB5BNZZQQA6QT4CRVVQPTCOT7NE)
+![Alt text](https://github.com/nameisxi/outliers-backend/blob/main/documentation/architecture-diagram.svg?raw=true)
 
 ## Endpoints
 ### Leads endpoint
