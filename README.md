@@ -37,3 +37,5 @@ Run tests:
 ```
 > python3 manage.py test
 ```
+
+The command automatically generates an HTML coverage report that can be found in `cover/`
