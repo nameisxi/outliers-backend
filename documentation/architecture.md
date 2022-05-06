@@ -1,5 +1,7 @@
 # Architecture
 
+![Alt text](https://raw.githubusercontent.com/nameisxi/outliers-backend/main/documentation/architecture-diagram.svg?token=GHSAT0AAAAAABUI6YOQ4P5MO3IDPWDWGWZGYTU4NDQ)
+
 ## Endpoints
 ```http
 GET /users/candidates/?format='json'&limit=10&language=python&language=java&topic=android
