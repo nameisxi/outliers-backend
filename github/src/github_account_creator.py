@@ -1,4 +1,5 @@
 import json
+from github.models import github_account
 
 from users.models import Candidate
 from ..models import GithubAccount
@@ -14,7 +15,7 @@ class GithubAccountCreator:
         """  
         print('Creating GithubAccounts...')
         
-        tenth = round(len(users) * 0.1)
+        tenth = max(round(len(users) * 0.1), 1)
 
         for i, user in enumerate(users):
             if (i + 1) % tenth == 0:

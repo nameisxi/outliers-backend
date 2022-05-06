@@ -34,6 +34,7 @@ class GithubRepoLanguage(BaseModel):
     repo = models.ForeignKey('GithubRepo', related_name='programming_languages', on_delete=models.CASCADE)
     language = models.ForeignKey(ProgrammingLanguage, on_delete=models.CASCADE)
     language_share = models.FloatField()
+    language_contribution = models.BigIntegerField()
 
 
 class GithubRepoTechnology(BaseModel):

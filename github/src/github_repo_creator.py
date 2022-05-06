@@ -58,6 +58,7 @@ class GithubRepoCreator:
                 'repo': github_repo,
                 'language': programming_language,
                 'language_share': -1.0,
+                'language_contribution': -1,
             }
         )
 
@@ -102,7 +103,7 @@ class GithubRepoCreator:
         """
         print('Creating GithubRepos...')
 
-        tenth = round(len(repos) * 0.1)
+        tenth = max(round(len(repos) * 0.1), 1)
 
         for i, user_repos in enumerate(repos):
             if (i + 1) % tenth == 0:

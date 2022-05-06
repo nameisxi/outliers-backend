@@ -4,8 +4,7 @@ from django.db.models import Avg
 from users.models import Candidate
 from github.models import GithubAccount, GithubRepo
 
-from .src.normalizer import Normalizer
-from .src.scorer import Scorer
+from .src import Normalizer, Scorer
 
 
 def compute(request):

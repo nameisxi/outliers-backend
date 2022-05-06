@@ -23,7 +23,7 @@ class CandidateListTestCase(APITestCase):
     candidate3.save()
 
     fields = {
-        'user_id': 1,
+        'user_id': -1,
         'username': 'test',
         'name': 'test',
         'location': 'test',
@@ -147,7 +147,7 @@ class CandidateListTestCase(APITestCase):
         request = factory.get('/candidates/?format=json')
         response = view(request)
 
-        assert(len(response.data) == 3)
+        assert(len(response.data) == Candidate.objects.all().count())
 
     def test_result_size_with_limit_filter(self):
         factory = APIRequestFactory()

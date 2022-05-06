@@ -31,6 +31,7 @@ class GithubMetadataCreator:
                         'repo': repo,
                         'language': programming_language,
                         'language_share': language_contributions_count / total_contributions_count,
+                        'language_contribution': language_contributions_count,
                     }
                 )
 
@@ -53,7 +54,7 @@ class GithubMetadataCreator:
         print('Creating GithubRepoLanguages & GithubAccountLanguages...')
 
         i = 1
-        tenth = round(len(repos.keys()) * 0.1)
+        tenth = max(round(len(repos.keys()) * 0.1), 1)
 
         for repo_id, languages in repos.items():
             if i % tenth == 0: print(f'    {(i / len(repos.keys())) * 100}%')
@@ -94,9 +95,19 @@ class GithubMetadataCreator:
         account_languages = GithubAccountLanguage.objects.all()
 
         for account_language in account_languages:
-            all_contributions = account_language.account.contributions.aggregate(models.Sum('repo__programming_languages__language_share'))['repo__programming_languages__language_share__sum']
-            language_contributions = account_language.account.contributions.filter(repo__programming_languages__language=account_language.language).aggregate(models.Sum('repo__programming_languages__language_share'))['repo__programming_languages__language_share__sum']
+            if account_language.account.contributions.count() == 0:
+                continue
             
+            # for contribution in account_language.account.contributions.all():
+            #     print("LANGUAGES:", contribution.programming_languages.all().count())    
+            #     for language in contribution.programming_languages.all():
+            #         print("Share:", language.language_share)
+
+            # all_contributions = account_language.account.contributions.aggregate(models.Sum('repo__programming_languages__language_share'))['repo__programming_languages__language_share__sum']
+            # language_contributions = account_language.account.contributions.filter(repo__programming_languages__language=account_language.language).aggregate(models.Sum('repo__programming_languages__language_share'))['repo__programming_languages__language_share__sum']
+
+            all_contributions = account_language.account.contributions.aggregate(models.Sum('repo__programming_languages__language_contribution'))['repo__programming_languages__language_contribution__sum']
+            language_contributions = account_language.account.contributions.filter(repo__programming_languages__language=account_language.language).aggregate(models.Sum('repo__programming_languages__language_contribution'))['repo__programming_languages__language_contribution__sum']
             account_language.language_share = language_contributions / all_contributions
         
         GithubAccountLanguage.objects.bulk_update(account_languages, ['language_share'])
@@ -116,7 +127,7 @@ class GithubMetadataCreator:
             repos_count = account_topic.account.repos_count
             if repos_count == 0: continue
             topic_count = account_topic.account.contributions.filter(repo__topics__topic=account_topic.topic).count()
-            
+
             account_topic.topic_share = topic_count / repos_count
         
         GithubAccountTopic.objects.bulk_update(account_topics, ['topic_share'])        
