@@ -26,7 +26,7 @@ Run Django DB migrations:
 
 # Run
 
-Run the backend in localhost:8000/:
+Run the backend in `localhost:8000/`:
 ```
 > python3 manage.py runserver
 ```
