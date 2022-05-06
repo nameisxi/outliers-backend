@@ -1,4 +1,4 @@
-# outliers-backend
+# Outliers-backend
 
 Outliers helps startups find engineering leads using openly available data from websites like Github. These leads are scored and ranked based on candidates open source work experience among other metrics.
 
