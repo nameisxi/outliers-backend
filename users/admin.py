@@ -4,3 +4,4 @@ from .models import *
 
 
 admin.site.register(Candidate)
+admin.site.register(CandidatePreProfile)

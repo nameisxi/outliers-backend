@@ -3,7 +3,7 @@ from django.db import models
 from .base_model import BaseModel
 
 
-class PreProfile(BaseModel):
+class CandidatePreProfile(BaseModel):
     name = models.CharField(max_length=255, null=True)
     location = models.CharField(max_length=255, null=True)
     email = models.CharField(max_length=255, null=True)
