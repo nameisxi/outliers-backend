@@ -27,11 +27,11 @@ class WorkScorer:
         """
         Scores a given candidate's Github profile based on the complexity of their previous work.
         """
-        if github_account.contributions.all().count() == 0:
+        if github_account.repos.count() == 0:
             return [0]
             
         normalized_average_repo_loc = 0
-        normalized_average_repo_filesize = self._average([c.repo.normalized_size_in_kilobytes for c in github_account.contributions.all()])
+        normalized_average_repo_filesize = self._average([repo.normalized_size_in_kilobytes for repo in github_account.repos.all()])
         normalized_average_repo_collaborators_count = 0
         # normalized_average_repo_language_count = self._average([c.repo.normalized_programming_languages_count for c in github_account.contributions.all()])
 
@@ -44,12 +44,12 @@ class WorkScorer:
         """
         Scores a given candidate's Github profile based on the impact of their previous work.
         """
-        if github_account.contributions.all().count() == 0:
+        if github_account.repos.count() == 0:
             return [0]
 
-        normalized_average_repo_stargazers_count = self._average([c.repo.normalized_stargazers_count for c in github_account.contributions.all()])
-        normalized_average_repo_forks_count = self._average([c.repo.normalized_forks_count for c in github_account.contributions.all()])
-        normalized_average_repo_watchers_count = self._average([c.repo.normalized_watchers_count for c in github_account.contributions.all()])
+        normalized_average_repo_stargazers_count = self._average([repo.normalized_stargazers_count for repo in github_account.repos.all()])
+        normalized_average_repo_forks_count = self._average([repo.normalized_forks_count for repo in github_account.repos.all()])
+        normalized_average_repo_watchers_count = self._average([repo.normalized_watchers_count for repo in github_account.repos.all()])
         
         # work_impact_score = self._average([normalized_average_repo_stargazers_count, normalized_average_repo_forks_count, normalized_average_repo_watchers_count])
         work_impact_score = [normalized_average_repo_stargazers_count, normalized_average_repo_forks_count, normalized_average_repo_watchers_count]

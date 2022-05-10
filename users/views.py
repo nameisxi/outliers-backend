@@ -38,6 +38,10 @@ class CandidateList(ListAPIView):
             When(github_accounts__company__isnull=False, then='github_accounts__company'),
             default=None,
         ),
+        verified_job_looker=Case(
+            When(github_accounts__hireable__isnull=False, then='github_accounts__hireable'),
+            default=None,
+        ),
     )
 
     serializer_class = CandidateSerializer

@@ -19,7 +19,7 @@ class GithubAccountCreator:
 
         for i, user in enumerate(users):
             if (i + 1) % tenth == 0:
-                print(f'    {((i + 1) / len(users)) * 100}%')
+                print(f'    {round(((i + 1) / len(users)) * 100)}%')
 
             # Create Candidate object if no Github account with the user_id exists
             candidate, _ = Candidate.objects.update_or_create(

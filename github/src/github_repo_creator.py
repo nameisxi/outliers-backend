@@ -31,18 +31,18 @@ class GithubRepoCreator:
                     }
                 )
 
-    def _create_repo_contributor_object(self, github_repo, github_account):
-        """
-        Takes a dictionary object representing a Github repo from the Github REST API and saves it into the database as a GithubRepo object.
-        """
-        GithubRepoContributor.objects.update_or_create(
-            repo=github_repo,
-            account=github_account,
-            defaults={
-                'account': github_account,
-                'repo': github_repo
-            }
-        )
+    # def _create_repo_contributor_object(self, github_repo, github_account):
+    #     """
+    #     Takes a dictionary object representing a Github repo from the Github REST API and saves it into the database as a GithubRepo object.
+    #     """
+    #     GithubRepoContributor.objects.update_or_create(
+    #         repo=github_repo,
+    #         account=github_account,
+    #         defaults={
+    #             'account': github_account,
+    #             'repo': github_repo
+    #         }
+    #     )
 
     def _create_repo_language_object(self, repo, github_repo, github_account):
         """
@@ -107,7 +107,7 @@ class GithubRepoCreator:
 
         for i, user_repos in enumerate(repos):
             if (i + 1) % tenth == 0:
-                print(f'    {((i + 1) / len(repos)) * 100}%')
+                print(f'    {round(((i + 1) / len(repos)) * 100)}%')
 
             username = user_repos['username']
             github_account = GithubAccount.objects.get(username=username)
@@ -119,7 +119,8 @@ class GithubRepoCreator:
                 # Create a repo with given values, or update an existing one
                 github_repo, _ = self._create_repo_object(repo)
                 # Create a repo contributor with given values, or update an existing one
-                self._create_repo_contributor_object(github_repo, github_account)
+                # self._create_repo_contributor_object(github_repo, github_account)
+                github_account.repos.add(github_repo)
                 # Add main programming language of the repo
                 if repo['language']:
                     self._create_repo_language_object(repo, github_repo, github_account)

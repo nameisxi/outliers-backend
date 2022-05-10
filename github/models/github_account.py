@@ -1,13 +1,15 @@
-from functools import cached_property
 from django.db import models
 
 from users.models import Candidate
 from technologies.models import ProgrammingLanguage, Technology, Topic
+from .github_repo import GithubRepo
 from .base_model import BaseModel
 
 
 class GithubAccount(BaseModel):
     owner = models.ForeignKey(Candidate, related_name='github_accounts', on_delete=models.CASCADE)
+    repos = models.ManyToManyField(GithubRepo, related_name='collaborators')
+
     user_id = models.IntegerField()
     username = models.CharField(max_length=255)
     name = models.CharField(max_length=255, null=True)
@@ -42,7 +44,7 @@ class GithubAccountLanguage(BaseModel):
 class GithubAccountTechnology(BaseModel):
     account = models.ForeignKey('GithubAccount', related_name='technologies', on_delete=models.CASCADE)
     technology = models.ForeignKey(Technology, on_delete=models.CASCADE)
-    # technology_share = models.FloatField()
+    technology_share = models.FloatField()
 
 
 class GithubAccountTopic(BaseModel):

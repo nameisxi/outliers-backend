@@ -1,7 +1,6 @@
 from django.db import models
-
 from technologies.models import ProgrammingLanguage, Technology, Topic
-from .github_account import GithubAccount
+# from .github_account import GithubAccount
 from .base_model import BaseModel
 
 
@@ -25,9 +24,9 @@ class GithubRepo(BaseModel):
     repo_api_url = models.CharField(max_length=255)
 
 
-class GithubRepoContributor(BaseModel):
-    account = models.ForeignKey(GithubAccount, related_name='contributions', on_delete=models.CASCADE)
-    repo = models.ForeignKey('GithubRepo', related_name='contributors', on_delete=models.CASCADE)
+# class GithubRepoContributor(BaseModel):
+#     account = models.ForeignKey('github.GithubAccount', related_name='contributionsjoin', on_delete=models.CASCADE)
+#     repo = models.ForeignKey('GithubRepo', related_name='contributors', on_delete=models.CASCADE)
 
 
 class GithubRepoLanguage(BaseModel):

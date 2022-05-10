@@ -36,12 +36,12 @@ class GithubMetadataCreator:
                 )
 
                 # Add programming language relationship with each account
-                for contributor in repo.contributors.all():
+                for collaborator in repo.collaborators.all():
                     GithubAccountLanguage.objects.update_or_create(
-                        account=contributor.account,
+                        account=collaborator,
                         language=programming_language, 
                         defaults={
-                            'account': contributor.account,
+                            'account': collaborator,
                             'language': programming_language,
                             'language_share': -1,
                         }
@@ -57,7 +57,7 @@ class GithubMetadataCreator:
         tenth = max(round(len(repos.keys()) * 0.1), 1)
 
         for repo_id, languages in repos.items():
-            if i % tenth == 0: print(f'    {(i / len(repos.keys())) * 100}%')
+            if i % tenth == 0: print(f'    {round((i / len(repos.keys())) * 100)}%')
             i += 1
             
             try:
@@ -79,7 +79,7 @@ class GithubMetadataCreator:
         repos = GithubRepo.objects.all()
 
         for repo in repos:
-            repo.programming_languages_count = repo.programming_languages.all().count()
+            repo.programming_languages_count = repo.programming_languages.count()
         
         GithubRepo.objects.bulk_update(repos, ['programming_languages_count'])
 
@@ -95,19 +95,11 @@ class GithubMetadataCreator:
         account_languages = GithubAccountLanguage.objects.all()
 
         for account_language in account_languages:
-            if account_language.account.contributions.count() == 0:
+            if account_language.account.repos.count() == 0:
                 continue
-            
-            # for contribution in account_language.account.contributions.all():
-            #     print("LANGUAGES:", contribution.programming_languages.all().count())    
-            #     for language in contribution.programming_languages.all():
-            #         print("Share:", language.language_share)
 
-            # all_contributions = account_language.account.contributions.aggregate(models.Sum('repo__programming_languages__language_share'))['repo__programming_languages__language_share__sum']
-            # language_contributions = account_language.account.contributions.filter(repo__programming_languages__language=account_language.language).aggregate(models.Sum('repo__programming_languages__language_share'))['repo__programming_languages__language_share__sum']
-
-            all_contributions = account_language.account.contributions.aggregate(models.Sum('repo__programming_languages__language_contribution'))['repo__programming_languages__language_contribution__sum']
-            language_contributions = account_language.account.contributions.filter(repo__programming_languages__language=account_language.language).aggregate(models.Sum('repo__programming_languages__language_contribution'))['repo__programming_languages__language_contribution__sum']
+            all_contributions = account_language.account.repos.aggregate(models.Sum('programming_languages__language_contribution'))['programming_languages__language_contribution__sum']
+            language_contributions = account_language.account.repos.filter(programming_languages__language=account_language.language).aggregate(models.Sum('programming_languages__language_contribution'))['programming_languages__language_contribution__sum']
             account_language.language_share = language_contributions / all_contributions
         
         GithubAccountLanguage.objects.bulk_update(account_languages, ['language_share'])
@@ -126,7 +118,7 @@ class GithubMetadataCreator:
         for account_topic in account_topics:
             repos_count = account_topic.account.repos_count
             if repos_count == 0: continue
-            topic_count = account_topic.account.contributions.filter(repo__topics__topic=account_topic.topic).count()
+            topic_count = account_topic.account.repos.filter(topics__topic=account_topic.topic).count()
 
             account_topic.topic_share = topic_count / repos_count
         
