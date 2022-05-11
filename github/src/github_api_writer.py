@@ -4,7 +4,7 @@ from datetime import datetime
 import pandas as pd
 
 
-class GithubWriter:
+class GithubAPIWriter:
     def __init__(self):
         pass
             

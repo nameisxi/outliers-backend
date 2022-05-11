@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from technologies.models import ProgrammingLanguage, Technology
 from ..models import *
-from ..src import GithubMetadataCreator, GithubRepoCreator
+from ..src.object_creators import GithubMetadataCreator, GithubRepoCreator
 from .test_github_repo_creator import TestGithubRepoCreator
 
 class TestGithubMetadataCreator(TestCase):

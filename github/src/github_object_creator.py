@@ -1,12 +1,12 @@
 import os
 import json
 
-from .creators.github_account_creator import GithubAccountCreator
-from .creators.github_repo_creator import GithubRepoCreator
-from .creators.github_metadata_creator import GithubMetadataCreator
+from .object_creators import GithubAccountCreator
+from .object_creators import GithubRepoCreator
+from .object_creators import GithubMetadataCreator
 
 
-class GithubPopulator:
+class GithubObjectCreator:
     def __init__(self):
         self._github_account_creator = GithubAccountCreator()
         self._github_repo_creator = GithubRepoCreator()
@@ -82,7 +82,7 @@ class GithubPopulator:
         self._github_metadata_creator.calculate_programming_languages_shares()
         self._github_metadata_creator.calculate_topics_shares()
 
-    def populate(self):
+    def create(self):
         self.create_github_accounts()
         self.create_github_repos()
         self.create_github_programming_languages()

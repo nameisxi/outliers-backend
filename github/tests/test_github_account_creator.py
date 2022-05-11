@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from users.models import Candidate
 from ..models import GithubAccount
-from ..src import GithubAccountCreator
+from ..src.object_creators import GithubAccountCreator
 
 
 class TestGithubAccountCreator(TestCase):

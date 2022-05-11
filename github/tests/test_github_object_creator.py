@@ -1,4 +1,4 @@
 from django.test import TestCase
 
-class TestGithubPopulator(TestCase):
+class TestGithubObjectCreator(TestCase):
     pass

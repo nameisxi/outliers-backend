@@ -9,10 +9,10 @@ from dotenv import load_dotenv
 from ghapi.all import GhApi
 from fastcore.xtras import obj2dict
 
-from .github_writer import GithubWriter
+from .github_api_writer import GithubAPIWriter
 
 
-class GithubScraper:
+class GithubAPIScraper:
     def __init__(self):
         load_dotenv()
         self._api = GhApi(token=os.getenv('GITHUB_PERSONAL_ACCESS_TOKEN'))
@@ -20,7 +20,7 @@ class GithubScraper:
         self._api_rate_limit_reset = None
         self._get_ratelimit()
         
-        self._writer = GithubWriter()
+        self._writer = GithubAPIWriter()
         
     def _get_ratelimit(self):
         rate_limit = self._api.rate_limit.get()['rate']

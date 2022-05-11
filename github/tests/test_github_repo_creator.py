@@ -3,7 +3,7 @@ import secrets
 from django.test import TestCase
 
 from ..models import *
-from ..src import GithubRepoCreator, GithubAccountCreator
+from ..src.object_creators import GithubRepoCreator, GithubAccountCreator
 from .test_github_account_creator import TestGithubAccountCreator
 
 

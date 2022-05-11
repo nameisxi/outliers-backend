@@ -1,2 +1,2 @@
-from .github_scraper import *
-from .github_populator import *
+from .github_api_scraper import *
+from .github_object_creator import *
