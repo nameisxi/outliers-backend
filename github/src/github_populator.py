@@ -1,8 +1,9 @@
+import os
 import json
 
-from .github_account_creator import GithubAccountCreator
-from .github_repo_creator import GithubRepoCreator
-from .github_metadata_creator import GithubMetadataCreator
+from .creators.github_account_creator import GithubAccountCreator
+from .creators.github_repo_creator import GithubRepoCreator
+from .creators.github_metadata_creator import GithubMetadataCreator
 
 
 class GithubPopulator:
@@ -11,11 +12,33 @@ class GithubPopulator:
         self._github_repo_creator = GithubRepoCreator()
         self._github_metadata_creator = GithubMetadataCreator()
 
+    def _get_newest_files_path(self, directory_path, file_type):
+        """
+        Finds the newest (assumes timestamp in the filename) file's path in a given directory.
+        """
+        directory_files = os.listdir(directory_path)
+        directory_files = [filename for filename in directory_files if file_type in filename]
+        directory_files.sort(reverse=True)
+
+        if len(directory_files) > 0:
+            file_path = f'{directory_path}{directory_files[0]}'
+            return file_path
+
+        return None
+
     def create_github_accounts(self):
         """
         Opens a JSON file containing Github user accounts from Github REST API. The data will get passed to GithubAccountCreator that saves the data into the database.
         """
-        with open('./github/data/users/users_v3.json', 'r') as f:
+        directory_path = './github/data/accounts/'
+        file_type = '.json'
+        file_path = self._get_newest_files_path(directory_path, file_type)
+
+        if not file_path:
+            print(f'[!] No files found in {directory_path}. Aborting GithubAccounts creation.')
+            return 
+
+        with open(file_path, 'r') as f:
             users = json.load(f)
             self._github_account_creator.create_accounts(users)
 
@@ -23,7 +46,15 @@ class GithubPopulator:
         """
         Opens a JSON file containing Github repos from Github REST API. The data will get passed to GithubRepoCreator that saves the data into the database.
         """
-        with open('./github/data/repos/repos_v3.json', 'r') as f:
+        directory_path = './github/data/repos/'
+        file_type = '.json'
+        file_path = self._get_newest_files_path(directory_path, file_type)
+
+        if not file_path:
+            print(f'[!] No files found in {directory_path}. Aborting GithubRepos creation.')
+            return 
+
+        with open(file_path, 'r') as f:
             repos = json.load(f)
             self._github_repo_creator.create_repos(repos)
 
@@ -31,7 +62,15 @@ class GithubPopulator:
         """
         Opens a JSON file containing list of repo IDs and those repos' programming languages from Github REST API. The data will get passed to GithubMetadataCreator that saves the data into the database.
         """
-        with open('./github/data/languages/languages_v2.json', 'r') as f:
+        directory_path = './github/data/repo_languages/'
+        file_type = '.json'
+        file_path = self._get_newest_files_path(directory_path, file_type)
+
+        if not file_path:
+            print(f'[!] No files found in {directory_path}. Aborting GithubAccountLanguages and GithubRepoLanguages creation.')
+            return 
+
+        with open(file_path, 'r') as f:
             repos = json.load(f)
             self._github_metadata_creator.create_programming_languages(repos)
 
@@ -43,3 +82,8 @@ class GithubPopulator:
         self._github_metadata_creator.calculate_programming_languages_shares()
         self._github_metadata_creator.calculate_topics_shares()
 
+    def populate(self):
+        self.create_github_accounts()
+        self.create_github_repos()
+        self.create_github_programming_languages()
+        self.create_github_metadata()

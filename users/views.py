@@ -47,8 +47,18 @@ class CandidateList(ListAPIView):
     serializer_class = CandidateSerializer
     filterset_class = CandidateFilter
 
-# def initialize(request):
-#     # Populate database with Github data
-#     populate()
-#     # Compute ranking scores for Candidate objects
-#     compute()
+def initialize(request):
+    # Populate database with Github data
+    print("#"*50)
+    print('# Populating the database with Github data...', ' '*13, '#')
+    print("#"*50)
+    print()
+    populate()
+    print()
+
+    # Compute ranking scores for Candidate objects
+    print("#"*50)
+    print('# Computing ranking scored for candidates...', ' '*4, '#')
+    print("#"*50)
+    print()
+    compute()
