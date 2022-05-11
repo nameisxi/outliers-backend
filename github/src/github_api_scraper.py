@@ -153,6 +153,9 @@ class GithubAPIScraper:
             for repo_data in repos_data:
                 parsed_repo_data = obj2dict(repo_data)
 
+                if not parsed_repo_data['pushed_at']: 
+                    continue
+
                 pushed_at_timestamp = parsed_repo_data['pushed_at'].split('T')[0]
                 pushed_at_time = datetime.strptime(pushed_at_timestamp, '%Y-%m-%d')
                 delta_between_last_push = current_time - pushed_at_time
@@ -233,6 +236,9 @@ class GithubAPIScraper:
             'https://github.com/junhoyeo': 11939,
             'https://github.com/thejungwon': 10800
         }
+
+        print("LIMITS:")
+        print(self._api_rate_limit_reset, self._api_calls_remaining)
         
         accounts = self._scrape_accounts_data(account_urls)
         self._writer.write_accounts_data(accounts)
