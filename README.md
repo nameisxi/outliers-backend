@@ -33,6 +33,9 @@ DATABASE_DEFAULT_USER=mydbusername
 DATABASE_DEFAULT_PASSWORD=mydbpassword
 DATABASE_DEFAULT_HOST=127.0.0.1
 DATABASE_DEFAULT_PORT=5432
+
+# Github REST API configs
+GITHUB_PERSONAL_ACCESS_TOKEN=[Ask from Tuomas]
 ```
 
 3. Run Django DB migrations:
@@ -68,4 +71,3 @@ The command automatically generates an HTML coverage report that can be found in
 
 - [Architecture doc](https://github.com/nameisxi/outliers-backend/blob/main/documentation/architecture.md)
 - [Testing doc](https://github.com/nameisxi/outliers-backend/blob/main/documentation/testing.md)
-- [Tuntikirjanpito](https://github.com/nameisxi/outliers-backend/blob/main/documentation/tuntikirjanpito.md)
