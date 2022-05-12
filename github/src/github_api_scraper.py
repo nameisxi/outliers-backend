@@ -1,4 +1,4 @@
-import os
+import os, json
 import time
 from datetime import datetime
 
@@ -39,7 +39,7 @@ class GithubAPIScraper:
             print()
             print(f'[!] Sleeping until API rate limit reset at {self._api_rate_limit_reset}')
             time.sleep(seconds_until_reset)
-            print('- Back to work')
+            print(' - Back to work')
             print()
         
         # Update the rate limit remaining count and next reset time since they have been reset.
@@ -228,17 +228,8 @@ class GithubAPIScraper:
         return repos_languages
     
     def scrape(self):
-        # account_urls = self._scrape_account_urls()
-        # self._writer.write_account_urls(account_urls)
-        
-        account_urls = {
-            'https://github.com/comfuture': 12882,
-            'https://github.com/junhoyeo': 11939,
-            'https://github.com/thejungwon': 10800
-        }
-
-        print("LIMITS:")
-        print(self._api_rate_limit_reset, self._api_calls_remaining)
+        account_urls = self._scrape_account_urls()
+        self._writer.write_account_urls(account_urls)
         
         accounts = self._scrape_accounts_data(account_urls)
         self._writer.write_accounts_data(accounts)
