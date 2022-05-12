@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'scores',
     'technologies',
     'rest_framework',
+    'rest_framework.authtoken',
     'django_filters',
     'corsheaders',
     'django_nose',
@@ -149,6 +150,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

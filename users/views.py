@@ -1,11 +1,115 @@
+from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Case, When, F, Q
-from rest_framework.generics import ListAPIView
+from django.contrib.auth.models import User
 
-from github.views import populate
+from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+
+from github.views import scrape, populate
 from scores.views import compute
 from .models import *
 from .serializers import *
 from .filters import *
+
+
+def _parse_and_validate_email_address(email_address):
+    if not email_address: return None
+
+    email_address = email_address.lower().strip()
+
+    if email_address and len(email_address) >= 3 and '@' in email_address:
+        return email_address
+
+    return None
+
+def _get_email_address_domain(email_address):
+    if not email_address or '@' not in email_address: 
+        return None
+
+    email_address_parts = email_address.split('@')
+    if len(email_address_parts) > 1 and email_address_parts[1]:
+        return email_address_parts[1]
+
+    return None
+
+def _parse_and_validate_password(password):
+    if not password: return None
+
+    password = password.strip()
+    if password and len(password) >= 8:
+        return password
+
+    return None
+
+def _get_employees_company(domain):
+    try:
+        company = Company.objects.get(domain_names__name=domain)
+    except Exception as e:
+        return None
+
+    return company
+
+def initialize(request):
+    # Populate database with Github data
+    print("#"*50)
+    print('# Scraping the Github REST API...', ' '*16, '#')
+    print("#"*50)
+    print()
+    scrape()
+    print()
+
+    # Populate database with Github data
+    print("#"*50)
+    print('# Populating the database with Github data...', ' '*13, '#')
+    print("#"*50)
+    print()
+    populate()
+    print()
+
+    # Compute ranking scores for Candidate objects
+    print("#"*50)
+    print('# Computing ranking scored for candidates...', ' '*4, '#')
+    print("#"*50)
+    print()
+    compute()
+
+
+class EmployeeSignupView(APIView):
+    def post(self, request):
+        email_address = _parse_and_validate_email_address(request.data['email'])
+        email_address_domain = _get_email_address_domain(email_address)
+        if (not email_address) or (not email_address_domain):
+            return HttpResponseBadRequest(f'Invalid email address {email_address}')
+        if User.objects.filter(email=email_address).exists():
+            return HttpResponseBadRequest(f'Email address already taken {email_address}')
+
+        password = _parse_and_validate_password(request.data['password1'])
+        if not password:
+            return HttpResponseBadRequest(f'Password is too short')
+        if request.data['password1'] != request.data['password2']:
+            return HttpResponseBadRequest(f"Passwords don't match")
+
+        company = _get_employees_company(email_address_domain)
+        if not company:
+            # Note, returning any other HTTP code than one in the email address domain step
+            # would let others know which companies are customers of Outliers and which are not.
+            return HttpResponseBadRequest(f'Invalid email address {email_address}')
+        
+        user = User.objects.create_user(
+            username=email_address,
+            email=email_address, 
+            password=password,
+        )
+        user.save()
+
+        employee = Employee(user=user, company=company)
+        employee.save()
+
+        token = Token.objects.create(user=user)
+
+        return Response({"Token": token.key})
 
 
 class CandidateList(ListAPIView):
@@ -46,19 +150,3 @@ class CandidateList(ListAPIView):
 
     serializer_class = CandidateSerializer
     filterset_class = CandidateFilter
-
-def initialize(request):
-    # Populate database with Github data
-    print("#"*50)
-    print('# Populating the database with Github data...', ' '*13, '#')
-    print("#"*50)
-    print()
-    populate()
-    print()
-
-    # Compute ranking scores for Candidate objects
-    print("#"*50)
-    print('# Computing ranking scored for candidates...', ' '*4, '#')
-    print("#"*50)
-    print()
-    compute()
