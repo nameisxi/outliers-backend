@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'github', 
     'scores',
     'technologies',
+    'openings',
+    'leads',
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',

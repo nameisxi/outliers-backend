@@ -1,5 +1,6 @@
 from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Case, When, F, Q
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
 from rest_framework.views import APIView
@@ -110,6 +111,26 @@ class EmployeeSignupView(APIView):
         token = Token.objects.create(user=user)
 
         return Response({"Token": token.key})
+
+
+# class CandidateSignupView(APIView):
+#     def post(self, request):
+#         pass
+
+
+class UserLoginView(APIView):
+    def post(self, request):
+        user = authenticate(
+            username=request.data['email'], 
+            password=request.data['password']
+        )
+
+        if user is not None:
+            token = Token.objects.get(user=user)
+            
+            return Response({"Token": token.key})
+        
+        return Response(status=401)
 
 
 class CandidateList(ListAPIView):
