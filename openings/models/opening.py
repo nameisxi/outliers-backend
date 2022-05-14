@@ -1,6 +1,6 @@
 from django.db import models
 
-from users.models import Candidate, Employee, Company
+from users.models import Employee, Company
 from technologies.models import ProgrammingLanguage, Technology, Topic
 from .base_model import BaseModel
 
@@ -14,22 +14,33 @@ class Opening(BaseModel):
         ('Closed', 'Closed'),
     ]
 
+    currencies = [
+        ('usd', 'USD'),
+        ('eur', 'EUR'),
+        ('krw', 'KRW'),
+    ]
+
     company = models.ForeignKey(Company, related_name='openings', on_delete=models.CASCADE)
     created_by = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    # leads = models.ManyToManyField(Lead, related_name='openings', on_delete=models.CASCADE)
 
     status = models.CharField(max_length=255, choices=opening_statuses)
     title = models.CharField(max_length=255)
-    team = models.CharField(max_length=255)
+    team = models.CharField(max_length=255, null=True)
 
-    description = models.TextField()
-    years_of_experience = models.IntegerField()
+    description = models.TextField(null=True)
+    years_of_experience_min = models.IntegerField(null=True)
+    years_of_experience_max = models.IntegerField(null=True)
 
     programming_languages = models.ManyToManyField(ProgrammingLanguage, related_name='openings')
     technologies = models.ManyToManyField(Technology, related_name='openings')
     topics = models.ManyToManyField(Topic, related_name='openings')
 
-    base_compensation = models.IntegerField()
-    equity_compensation = models.IntegerField()
-    other_compensation = models.IntegerField()
-
+    base_compensation_min = models.IntegerField()
+    base_compensation_max = models.IntegerField(null=True)
+    base_compensation_currency = models.CharField(max_length=3, choices=currencies)
+    equity_compensation_min = models.IntegerField(null=True)
+    equity_compensation_max = models.IntegerField(null=True)
+    equity_compensation_currency = models.CharField(max_length=3, choices=currencies)
+    other_compensation_min = models.IntegerField(null=True)
+    other_compensation_max = models.IntegerField(null=True)
+    other_compensation_currency = models.CharField(max_length=3, choices=currencies)

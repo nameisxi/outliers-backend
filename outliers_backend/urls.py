@@ -21,5 +21,6 @@ urlpatterns = [
     path('github/', include('github.urls')),
     path('scores/', include('scores.urls')),
     path('technologies/', include('technologies.urls')),
+    path('openings/', include('openings.urls')),
     path('admin/', admin.site.urls),
 ]
