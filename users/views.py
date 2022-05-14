@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
+
 
 from github.views import scrape, populate
 from scores.views import compute
@@ -78,6 +80,7 @@ def initialize(request):
 
 
 class EmployeeSignupView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         email_address = _parse_and_validate_email_address(request.data['email'])
         email_address_domain = _get_email_address_domain(email_address)

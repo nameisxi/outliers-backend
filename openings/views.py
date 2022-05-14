@@ -14,10 +14,6 @@ class CreateOpeningView(APIView):
         employee = Employee.objects.get(user=request.user)
         company = Company.objects.get(employees=employee)
 
-        print()
-        print("DATA:", request.data)
-        print()
-
         opening = Opening(
             company=company,
             created_by=employee,
@@ -25,36 +21,53 @@ class CreateOpeningView(APIView):
             title=request.data.get('title'),
             team=request.data.get('team', None),
             description=request.data.get('description', None),
-            years_of_experience=request.data.get('years_of_experience', None),
+            years_of_experience_min=request.data.get('years_of_experience_min', None),
+            years_of_experience_max=request.data.get('years_of_experience_max', None),
             base_compensation_min=request.data.get('base_compensation_min', None),
             base_compensation_max=request.data.get('base_compensation_max', None),
-            base_compensation_currency=request.data.get('base_compensation_curency', None),
+            base_compensation_currency=request.data.get('base_compensation_currency', 'usd'),
             equity_compensation_min=request.data.get('equity_compensation_min', None),
             equity_compensation_max=request.data.get('equity_compensation_max', None),
-            equity_compensation_currency=request.data.get('equity_compensation_curency', None),
+            equity_compensation_currency=request.data.get('equity_compensation_currency', 'usd'),
             other_compensation_min=request.data.get('other_compensation_min', None),
             other_compensation_max=request.data.get('other_compensation_max', None),
-            other_compensation_currency=request.data.get('other_compensation_curency', None),
+            other_compensation_currency=request.data.get('other_compensation_currency', 'usd'),
         )
+        opening.save()
 
         programming_languages = request.data.get('programming_languages', None)
+        print("PROGRAMMING_LANGUAGES:", programming_languages)
         if programming_languages:
-            for programming_language in programming_langugages:
-                language = ProgrammingLanguage.get(name=programming_language)
-                opening.programming_languages.add(language)
+            for programming_language in programming_languages:
+                print("PROGRAMMING_LANGUAGE:", programming_language)
+                try: 
+                    language = ProgrammingLanguage.objects.get(name=programming_language)
+                    opening.programming_languages.add(language)
+                except Exception as e:
+                    print(f"Error occurred while adding programming language '{programming_language}' to opening:")
+                    print(e)
+                    continue
 
         technologies = request.data.get('technologies', None)
         if technologies:
             for technology in technologies:
-                technology = Technology.get(name=technology)
-                opening.technologies.add(technology)
+                try:
+                    technology = Technology.objects.get(name=technology)
+                    opening.technologies.add(technology)
+                except Exception as e:
+                    print(f"Error occurred while adding technology '{technology}' to opening:")
+                    print(e)
+                    continue
 
         topics = request.data.get('topics', None)
         if topics:
             for topic in topics:
-                topic = Topic.get(name=topic)
-                opening.topics.add(topic)
-
-        opening.save()
+                try:
+                    topic = Topic.objects.get(name=topic)
+                    opening.topics.add(topic)
+                except Exception as e:
+                    print(f"Error occurred while adding topic '{topic}' to opening:")
+                    print(e)
+                    continue
 
         return Response(status=200)

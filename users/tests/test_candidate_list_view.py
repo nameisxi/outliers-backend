@@ -1,6 +1,7 @@
 import json
 
-from rest_framework.test import APITestCase, APIRequestFactory
+from django.contrib.auth.models import User
+from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 
 from github.models import GithubAccount, GithubAccountLanguage, GithubAccountTopic
 from technologies.models import ProgrammingLanguage, Topic
@@ -9,6 +10,13 @@ from ..views import CandidateList
 
 
 class CandidateListTestCase(APITestCase):
+    user = User.objects.create(
+        username='testuser',
+        email='testuser@test.com'
+    )
+    user.set_password('test1234')
+    user.save()
+
     fields = {
             'work_score': -1,
             'popularity_score': -1,
@@ -145,6 +153,7 @@ class CandidateListTestCase(APITestCase):
         view = CandidateList.as_view()
 
         request = factory.get('/candidates/?format=json')
+        force_authenticate(request, user=self.user)
         response = view(request)
 
         assert(len(response.data) == Candidate.objects.all().count())
@@ -154,11 +163,13 @@ class CandidateListTestCase(APITestCase):
         view = CandidateList.as_view()
 
         request = factory.get('/candidates/?format=json&limit=2')
+        force_authenticate(request, user=self.user)
         response = view(request)
         response.render()
         response = json.loads(response.content)
 
         request2 = factory.get('/candidates/?format=json&limit=1')
+        force_authenticate(request2, user=self.user)
         response2 = view(request2)
         response2.render()
         response2 = json.loads(response2.content)
@@ -171,16 +182,19 @@ class CandidateListTestCase(APITestCase):
         view = CandidateList.as_view()
 
         request = factory.get('/candidates/?format=json&language=python')
+        force_authenticate(request, user=self.user)
         response = view(request)
         response.render()
         response = json.loads(response.content)
 
         request2 = factory.get('/candidates/?format=json&language=java')
+        force_authenticate(request2, user=self.user)
         response2 = view(request2)
         response2.render()
         response2 = json.loads(response2.content)
 
         request3 = factory.get('/candidates/?format=json&language=go')
+        force_authenticate(request3, user=self.user)
         response3 = view(request3)
         response3.render()
         response3 = json.loads(response3.content)
@@ -194,16 +208,19 @@ class CandidateListTestCase(APITestCase):
         view = CandidateList.as_view()
 
         request = factory.get('/candidates/?format=json&language=python&language=java')
+        force_authenticate(request, user=self.user)
         response = view(request)
         response.render()
         response = json.loads(response.content)
 
         request2 = factory.get('/candidates/?format=json&language=java&language=go')
+        force_authenticate(request2, user=self.user)
         response2 = view(request2)
         response2.render()
         response2 = json.loads(response2.content)
 
         request3 = factory.get('/candidates/?format=json&language=go&language=python')
+        force_authenticate(request3, user=self.user)
         response3 = view(request3)
         response3.render()
         response3 = json.loads(response3.content)
@@ -217,16 +234,19 @@ class CandidateListTestCase(APITestCase):
         view = CandidateList.as_view()
 
         request = factory.get('/candidates/?format=json&topic=nlp')
+        force_authenticate(request, user=self.user)
         response = view(request)
         response.render()
         response = json.loads(response.content)
 
         request2 = factory.get('/candidates/?format=json&topic=crypto')
+        force_authenticate(request2, user=self.user)
         response2 = view(request2)
         response2.render()
         response2 = json.loads(response2.content)
 
         request3 = factory.get('/candidates/?format=json&topic=android')
+        force_authenticate(request3, user=self.user)
         response3 = view(request3)
         response3.render()
         response3 = json.loads(response3.content)
@@ -240,16 +260,19 @@ class CandidateListTestCase(APITestCase):
         view = CandidateList.as_view()
 
         request = factory.get('/candidates/?format=json&topic=nlp&topic=crypto')
+        force_authenticate(request, user=self.user)
         response = view(request)
         response.render()
         response = json.loads(response.content)
 
         request2 = factory.get('/candidates/?format=json&topic=crypto&topic=android')
+        force_authenticate(request2, user=self.user)
         response2 = view(request2)
         response2.render()
         response2 = json.loads(response2.content)
 
         request3 = factory.get('/candidates/?format=json&topic=android&topic=nlp')
+        force_authenticate(request3, user=self.user)
         response3 = view(request3)
         response3.render()
         response3 = json.loads(response3.content)
@@ -263,21 +286,25 @@ class CandidateListTestCase(APITestCase):
         view = CandidateList.as_view()
 
         request = factory.get('/candidates/?format=json&language=java')
+        force_authenticate(request, user=self.user)
         response = view(request)
         response.render()
         response = json.loads(response.content)
 
         request2 = factory.get('/candidates/?format=json&topic=crypto')
+        force_authenticate(request2, user=self.user)
         response2 = view(request2)
         response2.render()
         response2 = json.loads(response2.content)
 
         request3 = factory.get('/candidates/?format=json&language=java&topic=crypto')
+        force_authenticate(request3, user=self.user)
         response3 = view(request3)
         response3.render()
         response3 = json.loads(response3.content)
 
         request4 = factory.get('/candidates/?format=json&language=java&topic=nlp')
+        force_authenticate(request4, user=self.user)
         response4 = view(request4)
         response4.render()
         response4 = json.loads(response4.content)
