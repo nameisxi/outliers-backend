@@ -1,9 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 from users.models import Company, Employee
 from technologies.models import ProgrammingLanguage, Technology, Topic
 from .models import *
+from .serializers import *
 
 
 class CreateOpeningView(APIView):
@@ -11,6 +13,7 @@ class CreateOpeningView(APIView):
         pass
 
     def post(self, request):
+        # TODO: pass data to serializer and use serialized_data.is_valid(). Reference: https://stackoverflow.com/questions/39185912/can-we-use-serializer-class-attribute-with-apiviewdjango-rest-framework 
         employee = Employee.objects.get(user=request.user)
         company = Company.objects.get(employees=employee)
 
@@ -36,7 +39,6 @@ class CreateOpeningView(APIView):
         opening.save()
 
         programming_languages = request.data.get('programming_languages', None)
-        print("PROGRAMMING_LANGUAGES:", programming_languages)
         if programming_languages:
             for programming_language in programming_languages:
                 print("PROGRAMMING_LANGUAGE:", programming_language)
@@ -71,3 +73,21 @@ class CreateOpeningView(APIView):
                     continue
 
         return Response(status=200)
+
+
+class OpeningList(APIView):
+    """
+    Returns a list of Opening objects, belonging to a Company, for a logged in Employee.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        # employee = Employee.objects.get(user=request.user)
+        # company = Company.objects.get(employees=employee)
+        # openings = Opening.objects.filter(company=company)
+        openings = Opening.objects.all()
+
+        serializer = OpeningSerializer(openings, many=True)
+
+        return Response(serializer.data)
+

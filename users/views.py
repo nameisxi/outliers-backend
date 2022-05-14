@@ -81,6 +81,7 @@ def initialize(request):
 
 class EmployeeSignupView(APIView):
     permission_classes = [AllowAny]
+    
     def post(self, request):
         email_address = _parse_and_validate_email_address(request.data['email'])
         email_address_domain = _get_email_address_domain(email_address)
