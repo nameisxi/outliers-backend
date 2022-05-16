@@ -82,11 +82,11 @@ jobs:
           echo "DATABASE_PRODUCTION_PORT=" >> .env
           echo "GITHUB_PERSONAL_ACCESS_TOKEN=${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}" >> .env
           cat .env
-      - name: Google Cloud SQL Proxy
-        uses: mattes/gce-cloudsql-proxy-action@v1.0.1
-        with:
-          creds: ${{ secrets.GOOGLE_CLOUDSQL_SERVICE_ACCOUNT_KEY }}
-          instance: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}
+#       - name: Google Cloud SQL Proxy
+#         uses: mattes/gce-cloudsql-proxy-action@v1.0.1
+#         with:
+#           creds: ${{ secrets.GOOGLE_CLOUDSQL_SERVICE_ACCOUNT_KEY }}
+#           instance: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}
       - name: Run Tests
         run: |
           python manage.py test
