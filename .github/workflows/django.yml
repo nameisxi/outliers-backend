@@ -8,14 +8,49 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
       matrix:
         python-version: [3.9]
+        
+    # Docker Hub image that `postgres-job` executes in
+    container: node:latest
+    # service containers to run with `postgres-job`
+    services:
+      # label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres:latest
+        # service environment variables
+        # `POSTGRES_HOST` is `postgres`
+        env:
+          POSTGRES_DB: github_actions_db
+          POSTGRES_PASSWORD: github_actions_db_password
+          POSTGRES_PORT: 5432
+          POSTGRES_USER: github_actions_db_user
+        ports:
+          # maps tcp port 5432 on service container to the host
+          - 5432:5432
+        # set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
+      - name: Install PostgreSQL client
+        run: |
+          apt-get update
+          apt-get install --yes postgresql-client
+#       - name: Query database
+#         run: psql -h postgres -d postgres_db -U postgres_user -c 'SELECT 1;'
+#         env:
+#           # postgress password is required; alternatively, you can run:
+#           # `PGPASSWORD=postgres_password psql ...`
+#           PGPASSWORD: postgres_password
+          
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
@@ -30,6 +65,11 @@ jobs:
           touch .env
           echo "PRODUCTION=TRUE" >> .env
           echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
+          echo "GITHUB_ACTIONS_WORKFLOW=TRUE" >> .env
+          echo "DATABASE_GITHUB_ACTIONS_NAME=github_actions_db" >> .env
+          echo "DATABASE_GITHUB_ACTIONS_USER=github_actions_user" >> .env
+          echo "DATABASE_GITHUB_ACTIONS_PASSWORD=github_actions_password" >> .env
+          echo "DATABASE_GITHUB_ACTIONS_PORT=5432=" >> .env
           echo "GOOGLE_CLOUD_PROJECT_ID=${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}" >> .env
           echo "GOOGLE_CLOUD_REGION=${{ secrets.GOOGLE_CLOUD_REGION }}" >> .env
           echo "USE_CLOUD_SQL_AUTH_PROXY=TRUE" >> .env
