@@ -133,7 +133,7 @@ DATABASES = {
     }
 }
  
-if os.getenv('PRODUCTION') == 'TRUE':
+if os.getenv('PRODUCTION') == 'TRUE' and os.getenv('GITHUB_ACTIONS_WORKFLOW' == 'FALSE'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -142,6 +142,18 @@ if os.getenv('PRODUCTION') == 'TRUE':
             'PASSWORD': os.getenv('DATABASE_PRODUCTION_PASSWORD'),
             'HOST': os.getenv('DATABASE_PRODUCTION_HOST'),
             'PORT': os.getenv('DATABASE_PRODUCTION_PORT'),
+        }
+}
+
+if os.getenv('GITHUB_ACTIONS_WORKFLOW' == 'TRUE'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DATABASE_GITHUB_ACTIONS_NAME'),
+            'USER': os.getenv('DATABASE_GITHUB_ACTIONS_USER'),
+            'PASSWORD': os.getenv('DATABASE_GITHUB_ACTIONS_PASSWORD'),
+            'HOST': os.getenv('DATABASE_GITHUB_ACTIONS_HOST'),
+            'PORT': os.getenv('DATABASE_GITHUB_ACTIONS_PORT'),
         }
 }
 
