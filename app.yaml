@@ -4,7 +4,7 @@ instance_class: F1
 
 env_variables:
   # This setting is used in settings.py to configure ALLOWED_HOSTS
-  APPENGINE_URL: outliers-350303.asia-northeast3.r.appspot.com
+  APPENGINE_URL: outliers-350303.du.r.appspot.com
   # BUCKET_NAME: "example-gcs-bucket"
 
 handlers:
