@@ -143,7 +143,11 @@ if os.getenv('PRODUCTION') == 'TRUE':
             'HOST': os.getenv('DATABASE_PRODUCTION_HOST'),
             'PORT': os.getenv('DATABASE_PRODUCTION_PORT'),
         }
-    }
+}
+
+if os.getenv('USE_CLOUD_SQL_AUTH_PROXY') == 'TRUE':
+    DATABASES['default']['HOST'] = '127.0.0.1'
+    DATABASES['default']['PORT'] = 5432
 
 
 # Password validation
