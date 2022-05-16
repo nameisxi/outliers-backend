@@ -1,6 +1,7 @@
 runtime: python39
 
 instance_class: F1
+entrypoint: gunicorn -w 1 outliers_backend.wsgi
 
 env_variables:
   # This setting is used in settings.py to configure ALLOWED_HOSTS
