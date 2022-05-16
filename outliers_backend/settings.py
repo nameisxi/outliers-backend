@@ -53,6 +53,9 @@ CORS_ORIGIN_WHITELIST = [
     'https://getoutliers.com'
 ]
 
+CSRF_COOKIE_SECURE=True
+SESSION_COOKIE_SECURE=True
+
 APPENGINE_URL = os.getenv('APPENGINE_URL')
 if os.getenv('APPENGINE_URL'):
     # Ensure a scheme is present in the URL before it's processed.
