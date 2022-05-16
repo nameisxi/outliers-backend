@@ -19,7 +19,7 @@ jobs:
     # service containers to run with `postgres-job`
     services:
       # label used to access the service container
-      postgres:
+      db:
         # Docker Hub image
         image: postgres:latest
         # service environment variables
@@ -44,12 +44,6 @@ jobs:
         run: |
           apt-get update
           apt-get install --yes postgresql-client
-#       - name: Query database
-#         run: psql -h postgres -d postgres_db -U postgres_user -c 'SELECT 1;'
-#         env:
-#           # postgress password is required; alternatively, you can run:
-#           # `PGPASSWORD=postgres_password psql ...`
-#           PGPASSWORD: postgres_password
           
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
