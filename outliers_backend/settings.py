@@ -133,7 +133,7 @@ DATABASES = {
     }
 }
  
-if os.getenv('PRODUCTION') == 'TRUE' and os.getenv('GITHUB_ACTIONS_WORKFLOW' == 'FALSE'):
+if os.getenv('PRODUCTION') == 'TRUE' and os.getenv('GITHUB_ACTIONS_WORKFLOW') == 'FALSE':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -145,7 +145,7 @@ if os.getenv('PRODUCTION') == 'TRUE' and os.getenv('GITHUB_ACTIONS_WORKFLOW' == 
         }
 }
 
-if os.getenv('GITHUB_ACTIONS_WORKFLOW' == 'TRUE'):
+if os.getenv('GITHUB_ACTIONS_WORKFLOW') == 'TRUE':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
