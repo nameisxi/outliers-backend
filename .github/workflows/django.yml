@@ -25,7 +25,7 @@ jobs:
         # service environment variables
         # `POSTGRES_HOST` is `postgres`
         env:
-          POSTGRES_DB: github_actions
+          POSTGRES_DB: postgres
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_PORT: 5432
