@@ -99,7 +99,7 @@ jobs:
         with:
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
 #           working_directory: ${{ github.workspace }}
-          deliverables: ${{ github.workspace }}/app.yaml
+          deliverables: app/app.yaml
           version: v1
 
       - id: 'url'
