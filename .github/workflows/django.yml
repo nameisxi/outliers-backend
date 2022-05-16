@@ -32,6 +32,7 @@ jobs:
           echo SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} >> .env
           echo GOOGLE_CLOUD_PROJECT_ID=${{ secrets.GOOGLE_CLOUD_PROJECT_ID }} >> .env
           echo GOOGLE_CLOUD_REGION=${{ secrets.GOOGLE_CLOUD_REGION }} >> .env
+          echo USE_CLOUD_SQL_AUTH_PROXY=TRUE >> .env
           echo GOOGLE_CLOUDSQL_INSTANCE_NAME=${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }} >> .env
           echo DATABASE_PRODUCTION_NAME=${{ secrets.DATABASE_PRODUCTION_NAME }} >> .env
           echo DATABASE_PRODUCTION_USER=${{ secrets.DATABASE_PRODUCTION_USER }} >> .env
