@@ -23,7 +23,7 @@ from google.cloud.secretmanager import SecretManagerServiceClient
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Configurations loading
+# Configurations loading. 
 env_path = find_dotenv()
 # If local .env file is available, use that. 
 # Otherwise, use one from Google Cloud Secret Manager.
