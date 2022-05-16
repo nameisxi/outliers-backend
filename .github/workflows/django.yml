@@ -1,4 +1,4 @@
-name: Django CI
+name: Backend CI/CD Pipeline
 
 on:
   push:
@@ -13,17 +13,11 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.9]
-        
-    # Docker Hub image that `postgres-job` executes in
+
     container: node:latest
-    # service containers to run with `postgres-job`
     services:
-      # label used to access the service container
       postgres:
-        # Docker Hub image
         image: postgres:latest
-        # service environment variables
-        # `POSTGRES_HOST` is `postgres`
         env:
           POSTGRES_DB: postgres
           POSTGRES_USER: postgres
@@ -37,8 +31,6 @@ jobs:
 #           --health-interval 10s
 #           --health-timeout 5s
 #           --health-retries 5
-          
-
 
     steps:
       - name: Install PostgreSQL client
@@ -96,15 +88,17 @@ jobs:
 
     steps:
       - id: 'auth'
+      - name: 'GCP authentication'
         uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: '${{ secrets.GOOGLE_CLOUD_APP_ENGINE_SERVICE_ACCOUNT_KEY }}'
 
       - id: 'deploy'
+      - name: 'GCP App Engine deployment'
         uses: 'google-github-actions/deploy-appengine@v0'
         with:
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
-          deliverables: './app.yaml'
+          deliverables: '/app.yaml'
           version: 'v1'
 
       - id: 'url'
