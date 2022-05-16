@@ -88,13 +88,13 @@ jobs:
 
     steps:
       - id: 'auth'
-      - name: 'GCP authentication'
+        name: 'GCP authentication'
         uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: '${{ secrets.GOOGLE_CLOUD_APP_ENGINE_SERVICE_ACCOUNT_KEY }}'
 
       - id: 'deploy'
-      - name: 'GCP App Engine deployment'
+        name: 'GCP App Engine deployment'
         uses: 'google-github-actions/deploy-appengine@v0'
         with:
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
@@ -102,5 +102,6 @@ jobs:
           version: 'v1'
 
       - id: 'url'
+        name: 'GCP App Engine URL'
         run: 'curl "${{ steps.deploy.outputs.url }}"'
 
