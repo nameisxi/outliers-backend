@@ -1,0 +1,26 @@
+name: GCP App Engine CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+          
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CLOUD_APP_ENGINE_SERVICE_ACCOUNT_KEY }}'
+
+      - id: 'deploy'
+        uses: 'google-github-actions/deploy-appengine@v0'
+
+      - id: 'url'
+        run: 'curl "${{ steps.deploy.outputs.url }}"'
