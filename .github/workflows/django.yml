@@ -28,19 +28,19 @@ jobs:
       - name: Create .env File
         run: |
           touch .env
-          echo PRODUCTION=TRUE >> .env
-          echo SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} >> .env
-          echo GOOGLE_CLOUD_PROJECT_ID=${{ secrets.GOOGLE_CLOUD_PROJECT_ID }} >> .env
-          echo GOOGLE_CLOUD_REGION=${{ secrets.GOOGLE_CLOUD_REGION }} >> .env
-          echo USE_CLOUD_SQL_AUTH_PROXY=TRUE >> .env
-          echo GOOGLE_CLOUDSQL_INSTANCE_NAME=${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }} >> .env
-          echo DATABASE_PRODUCTION_NAME=${{ secrets.DATABASE_PRODUCTION_NAME }} >> .env
-          echo DATABASE_PRODUCTION_USER=${{ secrets.DATABASE_PRODUCTION_USER }} >> .env
-          echo DATABASE_PRODUCTION_PASSWORD=${{ secrets.DATABASE_PRODUCTION_PASSWORD }} >> .env
-          echo DATABASE_PRODUCTION_USER=${{ secrets.DATABASE_PRODUCTION_USER }} >> .env
-          echo DATABASE_PRODUCTION_HOST=/cloudsql/${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }} >> .env
-          echo DATABASE_PRODUCTION_PORT= >> .env
-          echo GITHUB_PERSONAL_ACCESS_TOKEN=${{ secrets.GH_PERSONAL_ACCESS_TOKEN }} >> .env
+          echo "PRODUCTION=TRUE" >> .env
+          echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
+          echo "GOOGLE_CLOUD_PROJECT_ID=${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}" >> .env
+          echo "GOOGLE_CLOUD_REGION=${{ secrets.GOOGLE_CLOUD_REGION }}" >> .env
+          echo "USE_CLOUD_SQL_AUTH_PROXY=TRUE" >> .env
+          echo "GOOGLE_CLOUDSQL_INSTANCE_NAME=${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}" >> .env
+          echo "DATABASE_PRODUCTION_NAME=${{ secrets.DATABASE_PRODUCTION_NAME }}" >> .env
+          echo "DATABASE_PRODUCTION_USER=${{ secrets.DATABASE_PRODUCTION_USER }}" >> .env
+          echo "DATABASE_PRODUCTION_PASSWORD=${{ secrets.DATABASE_PRODUCTION_PASSWORD }}" >> .env
+          echo "DATABASE_PRODUCTION_USER=${{ secrets.DATABASE_PRODUCTION_USER }}" >> .env
+          echo "DATABASE_PRODUCTION_HOST=/cloudsql/${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}" >> .env
+          echo "DATABASE_PRODUCTION_PORT=" >> .env
+          echo "GITHUB_PERSONAL_ACCESS_TOKEN=${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}" >> .env
           cat .env
       - name: Google Cloud SQL Proxy
         uses: mattes/gce-cloudsql-proxy-action@v1.0.1
