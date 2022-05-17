@@ -48,6 +48,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('PRODUCTION') == 'FALSE'
 
 ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1',
     '.outliers-350303.du.r.appspot.com',
     '.frontend-dot-outliers-350303.du.r.appspot.com',
     '.getoutliers.com',
@@ -56,6 +58,8 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'https://getoutliers.com',
     'https://api.getoutliers.com',
+    'https://outliers-350303.du.r.appspot.com'
+    'https://frontend-dot-outliers-350303.du.r.appspot.com'
 ]
 # CORS_ORIGIN_ALLOW_ALL = True    
 
@@ -87,22 +91,22 @@ INSTALLED_APPS = [
     'technologies',
     'openings',
     'leads',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
-    'corsheaders',
     'django_nose',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'outliers_backend.urls'
