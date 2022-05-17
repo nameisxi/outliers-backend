@@ -60,8 +60,8 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'https://getoutliers.com',
     'https://api.getoutliers.com',
-    'https://outliers-350303.du.r.appspot.com'
-    'https://frontend-dot-outliers-350303.du.r.appspot.com'
+    # 'https://outliers-350303.du.r.appspot.com'
+    # 'https://frontend-dot-outliers-350303.du.r.appspot.com'
 ]
 # CORS_ORIGIN_ALLOW_ALL = True    
 

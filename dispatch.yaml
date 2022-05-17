@@ -1,13 +1,12 @@
 dispatch:
-  # # Send all api traffic to the default service, e.g. backend.
-  # - url: "api.getoutliers.com/*"
-  #   service: default
+- url: "getoutliers.com/*"
+  service: frontend
 
-  # # Send all other traffic to the frontend.
-  # - url: "*/*"
-  #   service: frontend
+- url: "www.getoutliers.com/*"
+  service: frontend
 
-  - url: "getoutliers.com/*"
-    service: frontend
-  - url: "api.getoutliers.com/*"
-     service: default
+- url: "api.getoutliers.com/*"
+  service: default
+
+- url: "www.api.getoutliers.com/*"
+  service: default
