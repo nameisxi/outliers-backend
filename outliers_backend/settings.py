@@ -47,13 +47,15 @@ else:
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('PRODUCTION') == 'FALSE'
 
-ALLOWED_HOSTS = [
-    'localhost', 
-    '127.0.0.1',
-    '.outliers-350303.du.r.appspot.com',
-    '.frontend-dot-outliers-350303.du.r.appspot.com',
-    '.getoutliers.com',
-]
+# ALLOWED_HOSTS = [
+#     'localhost', 
+#     '127.0.0.1',
+#     '.outliers-350303.du.r.appspot.com',
+#     '.frontend-dot-outliers-350303.du.r.appspot.com',
+#     '.getoutliers.com',
+# ]
+ALLOWED_HOSTS = ['*']
+
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'https://getoutliers.com',
