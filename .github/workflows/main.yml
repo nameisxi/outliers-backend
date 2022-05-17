@@ -100,7 +100,6 @@ jobs:
         uses: 'google-github-actions/deploy-appengine@v0'
         with:
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
-          # deliverables: 'app.yaml'
           deliverables: 'app.yaml'
           version: backend-v1
 
