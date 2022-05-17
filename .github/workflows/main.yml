@@ -106,7 +106,7 @@ jobs:
         with:
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
           deliverables: 'dispatch.yaml'
-          deliverables: 'app.yaml'
+          # deliverables: 'app.yaml'
           version: backend-v1
 
       - id: 'url'
