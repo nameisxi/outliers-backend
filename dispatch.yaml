@@ -9,5 +9,5 @@ dispatch:
 
   - url: "getoutliers.com/*"
     service: frontend
-  - url: “api.getoutliers.com/*”
+  - url: "api.getoutliers.com/*"
      service: default
