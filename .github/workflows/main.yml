@@ -79,7 +79,7 @@ jobs:
       #     creds: ${{ secrets.GOOGLE_CLOUDSQL_SERVICE_ACCOUNT_KEY }}
       #     instance: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}
       - name: Create static files
-        run: python manage.py collecstatic --noinput
+        run: python manage.py collectstatic --noinput
 
       - name: Run Tests
         run: python manage.py test
