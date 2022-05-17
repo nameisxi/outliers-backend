@@ -1,7 +1,7 @@
 runtime: python39
 env: standard
 instance_class: F1
-# entrypoint: gunicorn -b :8080 -w 1 outliers_backend.wsgi
+entrypoint: gunicorn -b :8080 -w 1 outliers_backend.wsgi
 
 env_variables:
   APPENGINE_URL: outliers-350303.du.r.appspot.com
