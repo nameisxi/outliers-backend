@@ -70,14 +70,14 @@ jobs:
           echo "DATABASE_PRODUCTION_PORT=" >> .env
           echo "GITHUB_PERSONAL_ACCESS_TOKEN=${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}" >> .env
           cat .env
-#       - name: Google Cloud SQL Proxy
-#         uses: mattes/gce-cloudsql-proxy-action@v1.0.1
-#         with:
-#           creds: ${{ secrets.GOOGLE_CLOUDSQL_SERVICE_ACCOUNT_KEY }}
-#           instance: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}
-      - name: Run Tests
-        run: |
-          python manage.py test
+      # - name: Google Cloud SQL Proxy
+      #   uses: mattes/gce-cloudsql-proxy-action@v1.0.1
+      #   with:
+      #     creds: ${{ secrets.GOOGLE_CLOUDSQL_SERVICE_ACCOUNT_KEY }}
+      #     instance: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}
+      # - name: Run Tests
+      #   run: |
+      #     python manage.py test
           
   deploy:
     needs: build
@@ -100,9 +100,9 @@ jobs:
         uses: 'google-github-actions/deploy-appengine@v0'
         with:
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
-          # working_directory: ${{ github.workspace }}
-          deliverables: 'app.yaml'
-          version: v1
+          # deliverables: 'app.yaml'
+          deliverables: ['app.yaml', 'dispatch.yaml']
+          version: backend-v1
 
       - id: 'url'
         name: GCP App Engine URL
