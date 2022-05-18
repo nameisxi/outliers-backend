@@ -5,7 +5,6 @@ entrypoint: gunicorn -b :$PORT outliers_backend.wsgi
 
 env_variables:
   APPENGINE_URL: outliers-350303.du.r.appspot.com
-  # BUCKET_NAME: "example-gcs-bucket"
 
 handlers:
 - url: /static

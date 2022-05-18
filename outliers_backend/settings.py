@@ -25,19 +25,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Configurations loading. 
 env_path = find_dotenv()
-# If local .env file is available, use that. 
-# Otherwise, use one from Google Cloud Secret Manager.
+
+# If local .env file is available, use that. Otherwise, use one from Google Cloud Secret Manager.
 if os.path.isfile(env_path):
     load_dotenv(env_path)
-elif os.environ.get('GOOGLE_CLOUD_PROJECT', None):
-    project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
+# elif os.environ.get('GOOGLE_CLOUD_PROJECT', None):
+elif os.getenv('PRODUCTION') == 'TRUE' and os.getenv('GITHUB_ACTIONS_WORKFLOW') == 'FALSE':
+    project_id = os.getenv('GOOGLE_CLOUD_PROJECT_ID')
+    settings_name = os.getenv('GCP_SECRET_MANAGER_SETTINGS_NAME')
+    name = f'projects/{project_id}/secrets/{settings_name}/versions/latest'
 
     client = SecretManagerServiceClient()
-    settings_name = os.environ.get('SETTINGS_NAME', 'django_settings')
-    name = f'projects/{project_id}/secrets/{settings_name}/versions/latest'
     payload = client.access_secret_version(name=name).payload.data.decode('UTF-8')
-    configs = StringIO(payload)
-    load_dotenv(stream=configs)
+    load_dotenv(stream=StringIO(payload))
 else:
     raise Exception("No local .env or Google Cloud Secret Manager found. No secrets found.")
 
@@ -70,7 +70,11 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE=True
 SESSION_COOKIE_SECURE=True
 
-APPENGINE_URL = os.getenv('APPENGINE_URL')
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.getoutliers.com'
+]
+
+APPENGINE_URL = os.environ.get('APPENGINE_URL')
 print('#'*50)
 print()
 print()
@@ -78,16 +82,15 @@ print("APPENGINE URL:", APPENGINE_URL)
 print()
 print()
 print('#'*50)
-if os.getenv('APPENGINE_URL'):
+if APPENGINE_URL:
     # Ensure a scheme is present in the URL before it's processed.
     if not urlparse(APPENGINE_URL).scheme:
         APPENGINE_URL = f'https://{APPENGINE_URL}'
 
-    # ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc]
-    # CSRF_TRUSTED_ORIGINS = [APPENGINE_URL]
+    ALLOWED_HOSTS.append(urlparse(APPENGINE_URL).netloc)
+    CSRF_TRUSTED_ORIGINS.append(APPENGINE_URL)
     SECURE_SSL_REDIRECT = True
 
-CSRF_TRUSTED_ORIGINS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
