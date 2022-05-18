@@ -30,7 +30,6 @@ env_path = find_dotenv()
 if os.path.isfile(env_path):
     load_dotenv(env_path)
 elif os.environ.get('GOOGLE_CLOUD_PROJECT', None):
-# elif os.getenv('PRODUCTION') == 'TRUE' and os.getenv('GITHUB_ACTIONS_WORKFLOW') == 'FALSE':
     project_id = os.getenv('GOOGLE_CLOUD_PROJECT_ID')
     settings_name = os.getenv('GCP_SECRET_MANAGER_SETTINGS_NAME')
     name = f'projects/{project_id}/secrets/{settings_name}/versions/latest'
@@ -38,7 +37,6 @@ elif os.environ.get('GOOGLE_CLOUD_PROJECT', None):
     client = SecretManagerServiceClient()
     payload = client.access_secret_version(name=name).payload.data.decode('UTF-8')
     load_dotenv(stream=StringIO(payload))
-    raise Exception("TOIMIIIIIIIIII")
 else:
     raise Exception("No local .env or Google Cloud Secret Manager found. No secrets found.")
 
@@ -77,13 +75,6 @@ CSRF_COOKIE_SECURE=True
 SESSION_COOKIE_SECURE=True
 
 APPENGINE_URL = os.environ.get('APPENGINE_URL')
-print('#'*50)
-print()
-print()
-print("APPENGINE URL:", APPENGINE_URL)
-print()
-print()
-print('#'*50)
 if APPENGINE_URL:
     # Ensure a scheme is present in the URL before it's processed.
     if not urlparse(APPENGINE_URL).scheme:
@@ -190,6 +181,16 @@ if os.getenv('GITHUB_ACTIONS_WORKFLOW') == 'TRUE':
 if os.getenv('USE_CLOUD_SQL_AUTH_PROXY') == 'TRUE':
     DATABASES['default']['HOST'] = '127.0.0.1'
     DATABASES['default']['PORT'] = 5431
+
+print('#'*50)
+print()
+print()
+print(os.getenv('PRODUCTION'))
+print(os.getenv('GITHUB_ACTIONS_WORKFLOW'))
+print("DB CONFIGS:", DATABASES)
+print()
+print()
+print('#'*50)
 
 
 # Password validation
