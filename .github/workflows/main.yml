@@ -92,21 +92,19 @@ jobs:
           wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
           chmod +x cloud_sql_proxy
 
-      - name: Apply migrations
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: {{ secrets.GOOGLE_CLOUDSQL_SERVICE_ACCOUNT_KEY }}
+      - id: 'auth'
+        name: GCP Authentication For Cloud SQL
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CLOUDSQL_SERVICE_ACCOUNT_KEY }}'
+
+      - name: Apply Migrations
         run: |
           echo "GITHUB_ACTIONS_WORKFLOW=FALSE" >> .env
           echo "USE_CLOUD_SQL_AUTH_PROXY=TRUE" >> .env
           ./cloud_sql_proxy -instances="${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}"=tcp:5431 &
           python manage.py migrate
           exit 0;
-
-      # - name: Applying migrations
-      #   run: |
-      #     echo "GITHUB_ACTIONS_WORKFLOW=FALSE" >> .env
-      #     echo "USE_CLOUD_SQL_AUTH_PROXY=TRUE" >> .env
-      #     python manage.py migrate
           
   deploy:
     needs: build
