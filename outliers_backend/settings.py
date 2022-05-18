@@ -29,8 +29,8 @@ env_path = find_dotenv()
 # If local .env file is available, use that. Otherwise, use one from Google Cloud Secret Manager.
 if os.path.isfile(env_path):
     load_dotenv(env_path)
-# elif os.environ.get('GOOGLE_CLOUD_PROJECT', None):
-elif os.getenv('PRODUCTION') == 'TRUE' and os.getenv('GITHUB_ACTIONS_WORKFLOW') == 'FALSE':
+elif os.environ.get('GOOGLE_CLOUD_PROJECT', None):
+# elif os.getenv('PRODUCTION') == 'TRUE' and os.getenv('GITHUB_ACTIONS_WORKFLOW') == 'FALSE':
     project_id = os.getenv('GOOGLE_CLOUD_PROJECT_ID')
     settings_name = os.getenv('GCP_SECRET_MANAGER_SETTINGS_NAME')
     name = f'projects/{project_id}/secrets/{settings_name}/versions/latest'
@@ -38,6 +38,7 @@ elif os.getenv('PRODUCTION') == 'TRUE' and os.getenv('GITHUB_ACTIONS_WORKFLOW') 
     client = SecretManagerServiceClient()
     payload = client.access_secret_version(name=name).payload.data.decode('UTF-8')
     load_dotenv(stream=StringIO(payload))
+    raise Exception("TOIMIIIIIIIIII")
 else:
     raise Exception("No local .env or Google Cloud Secret Manager found. No secrets found.")
 
@@ -64,15 +65,16 @@ ALLOWED_HOSTS = ['*']
 #     # 'https://outliers-350303.du.r.appspot.com'
 #     # 'https://frontend-dot-outliers-350303.du.r.appspot.com'
 # ]
-CORS_ORIGIN_ALLOW_ALL = True    
-CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True 
 
-CSRF_COOKIE_SECURE=True
-SESSION_COOKIE_SECURE=True
+CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.getoutliers.com'
 ]
+
+CSRF_COOKIE_SECURE=True
+SESSION_COOKIE_SECURE=True
 
 APPENGINE_URL = os.environ.get('APPENGINE_URL')
 print('#'*50)
@@ -94,6 +96,7 @@ if APPENGINE_URL:
 
 # Application definition
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -106,7 +109,6 @@ INSTALLED_APPS = [
     'technologies',
     'openings',
     'leads',
-    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
