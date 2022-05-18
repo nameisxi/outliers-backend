@@ -93,11 +93,12 @@ jobs:
           chmod +x cloud_sql_proxy
 
       - name: Apply migrations
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: {{ secrets.GOOGLE_CLOUDSQL_SERVICE_ACCOUNT_KEY }}
         run: |
           echo "GITHUB_ACTIONS_WORKFLOW=FALSE" >> .env
           echo "USE_CLOUD_SQL_AUTH_PROXY=TRUE" >> .env
-          echo "${{ secrets.GOOGLE_CLOUDSQL_SERVICE_ACCOUNT_KEY }}" | base64 --decode > ./secrets.json
-          ./cloud_sql_proxy -instances="${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}"=tcp:5431 -credential_file secrets.json &
+          ./cloud_sql_proxy -instances="${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}"=tcp:5431 &
           python manage.py migrate
           exit 0;
 
