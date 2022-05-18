@@ -182,18 +182,6 @@ if os.getenv('USE_CLOUD_SQL_AUTH_PROXY') == 'TRUE':
     DATABASES['default']['HOST'] = '127.0.0.1'
     DATABASES['default']['PORT'] = 5431
 
-print('#'*50)
-print()
-print()
-print("Production:", os.getenv('PRODUCTION'))
-print("Workflow:", os.getenv('GITHUB_ACTIONS_WORKFLOW'))
-print("Project id:", os.getenv('GOOGLE_CLOUD_PROJECT_ID'))
-print("Settings name:", os.getenv('GCP_SECRET_MANAGER_SETTINGS_NAME'))
-print("DB CONFIGS:", DATABASES)
-print()
-print()
-print('#'*50)
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

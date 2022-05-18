@@ -117,14 +117,9 @@ class EmployeeSignupView(APIView):
         return Response({"Token": token.key})
 
 
-# class CandidateSignupView(APIView):
-#     def post(self, request):
-#         pass
-
-
 class UserLoginView(APIView):
     permission_classes = [AllowAny]
-    
+
     def post(self, request):
         user = authenticate(
             username=request.data['email'], 

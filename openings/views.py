@@ -22,26 +22,25 @@ class CreateOpeningView(APIView):
             created_by=employee,
             status='Sourcing',
             title=request.data.get('title'),
-            team=request.data.get('team', None),
-            description=request.data.get('description', None),
-            years_of_experience_min=request.data.get('years_of_experience_min', None),
+            team=request.data.get('team'),
+            description=request.data.get('description'),
+            years_of_experience_min=request.data.get('years_of_experience_min', 0),
             years_of_experience_max=request.data.get('years_of_experience_max', None),
-            base_compensation_min=request.data.get('base_compensation_min', None),
-            base_compensation_max=request.data.get('base_compensation_max', None),
-            base_compensation_currency=request.data.get('base_compensation_currency', 'usd'),
-            equity_compensation_min=request.data.get('equity_compensation_min', None),
-            equity_compensation_max=request.data.get('equity_compensation_max', None),
-            equity_compensation_currency=request.data.get('equity_compensation_currency', 'usd'),
-            other_compensation_min=request.data.get('other_compensation_min', None),
-            other_compensation_max=request.data.get('other_compensation_max', None),
-            other_compensation_currency=request.data.get('other_compensation_currency', 'usd'),
+            # base_compensation_min=request.data.get('base_compensation_min', None),
+            # base_compensation_max=request.data.get('base_compensation_max', None),
+            # base_compensation_currency=request.data.get('base_compensation_currency', 'usd'),
+            # equity_compensation_min=request.data.get('equity_compensation_min', None),
+            # equity_compensation_max=request.data.get('equity_compensation_max', None),
+            # equity_compensation_currency=request.data.get('equity_compensation_currency', 'usd'),
+            # other_compensation_min=request.data.get('other_compensation_min', None),
+            # other_compensation_max=request.data.get('other_compensation_max', None),
+            # other_compensation_currency=request.data.get('other_compensation_currency', 'usd'),
         )
         opening.save()
 
         programming_languages = request.data.get('programming_languages', None)
         if programming_languages:
             for programming_language in programming_languages:
-                print("PROGRAMMING_LANGUAGE:", programming_language)
                 try: 
                     language = ProgrammingLanguage.objects.get(name=programming_language)
                     opening.programming_languages.add(language)
@@ -79,12 +78,17 @@ class OpeningList(APIView):
     """
     Returns a list of Opening objects, belonging to a Company, for a logged in Employee.
     """
-    permission_classes = [AllowAny]
 
-    def get(self, request):
+    def get(self, request, opening_id=None):
         # employee = Employee.objects.get(user=request.user)
         # company = Company.objects.get(employees=employee)
         # openings = Opening.objects.filter(company=company)
+        if opening_id:
+            opening = Opening.objects.get(id=opening_id)
+            serializer = OpeningSerializer(opening, many=False)
+
+            return Response(serializer.data)
+
         openings = Opening.objects.all()
 
         serializer = OpeningSerializer(openings, many=True)
