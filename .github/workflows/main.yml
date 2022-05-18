@@ -80,18 +80,32 @@ jobs:
       - name: Run Tests
         run: python manage.py test
 
-      - name: Starting Google Cloud SQL proxy
-        uses: mattes/gce-cloudsql-proxy-action@v1.0.1
-        with:
-          creds: ${{ secrets.GOOGLE_CLOUDSQL_SERVICE_ACCOUNT_KEY }}
-          instance: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}
-          port: 5431
+      # - name: Starting Google Cloud SQL proxy
+      #   uses: mattes/gce-cloudsql-proxy-action@v1.0.1
+      #   with:
+      #     creds: ${{ secrets.GOOGLE_CLOUDSQL_SERVICE_ACCOUNT_KEY }}
+      #     instance: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}
+      #     port: 5431
 
-      - name: Applying migrations
+      - name: Setup Cloud SQL Proxy
+        run: |
+          wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+          chmod +x cloud_sql_proxy
+
+      - name: Apply migrations
         run: |
           echo "GITHUB_ACTIONS_WORKFLOW=FALSE" >> .env
           echo "USE_CLOUD_SQL_AUTH_PROXY=TRUE" >> .env
+          echo "${{ secrets.GOOGLE_CLOUDSQL_SERVICE_ACCOUNT_KEY }}" | base64 --decode > ./secrets.json
+          ./cloud_sql_proxy -instances="${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}:${{ secrets.GOOGLE_CLOUD_REGION }}:${{ secrets.GOOGLE_CLOUDSQL_INSTANCE_NAME }}"=tcp:5431 -credential_file secrets.json &
           python manage.py migrate
+          exit 0;
+
+      # - name: Applying migrations
+      #   run: |
+      #     echo "GITHUB_ACTIONS_WORKFLOW=FALSE" >> .env
+      #     echo "USE_CLOUD_SQL_AUTH_PROXY=TRUE" >> .env
+      #     python manage.py migrate
           
   deploy:
     needs: build
@@ -114,7 +128,6 @@ jobs:
         uses: 'google-github-actions/deploy-appengine@v0'
         with:
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
-          # deliverables: 'dispatch.yaml'
           deliverables: 'app.yaml'
           version: backend-v1
 
