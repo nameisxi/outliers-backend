@@ -29,9 +29,9 @@ env_path = find_dotenv()
 # If local .env file is available, use that. Otherwise, use one from Google Cloud Secret Manager.
 if os.path.isfile(env_path):
     load_dotenv(env_path)
-elif os.environ.get('GOOGLE_CLOUD_PROJECT', None):
-    project_id = os.getenv('GOOGLE_CLOUD_PROJECT_ID')
-    settings_name = os.getenv('GCP_SECRET_MANAGER_SETTINGS_NAME')
+elif os.environ.get('GCP_PROJECT_ID', None):
+    project_id = os.environ.get('GCP_PROJECT_ID')
+    settings_name = os.environ.get('GCP_SECRET_MANAGER_SETTINGS_NAME')
     name = f'projects/{project_id}/secrets/{settings_name}/versions/latest'
 
     client = SecretManagerServiceClient()
@@ -185,8 +185,10 @@ if os.getenv('USE_CLOUD_SQL_AUTH_PROXY') == 'TRUE':
 print('#'*50)
 print()
 print()
-print(os.getenv('PRODUCTION'))
-print(os.getenv('GITHUB_ACTIONS_WORKFLOW'))
+print("Production:", os.getenv('PRODUCTION'))
+print("Workflow:", os.getenv('GITHUB_ACTIONS_WORKFLOW'))
+print("Project id:", os.getenv('GOOGLE_CLOUD_PROJECT_ID'))
+print("Settings name:", os.getenv('GCP_SECRET_MANAGER_SETTINGS_NAME'))
 print("DB CONFIGS:", DATABASES)
 print()
 print()

@@ -123,6 +123,8 @@ class EmployeeSignupView(APIView):
 
 
 class UserLoginView(APIView):
+    permission_classes = [AllowAny]
+    
     def post(self, request):
         user = authenticate(
             username=request.data['email'], 
