@@ -53,31 +53,41 @@ DEBUG = os.getenv('PRODUCTION') == 'FALSE'
 #     '.outliers-350303.du.r.appspot.com',
 #     '.frontend-dot-outliers-350303.du.r.appspot.com',
 #     '.getoutliers.com',
+#     'api.getoutliers.com',
 # ]
 ALLOWED_HOSTS = ['*']
 
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'https://getoutliers.com',
-    'https://api.getoutliers.com',
-    # 'https://outliers-350303.du.r.appspot.com'
-    # 'https://frontend-dot-outliers-350303.du.r.appspot.com'
-]
-# CORS_ORIGIN_ALLOW_ALL = True    
+# CORS_ORIGIN_WHITELIST = [
+#     'http://localhost:3000',
+#     'https://getoutliers.com',
+#     'https://api.getoutliers.com',
+#     # 'https://outliers-350303.du.r.appspot.com'
+#     # 'https://frontend-dot-outliers-350303.du.r.appspot.com'
+# ]
+CORS_ORIGIN_ALLOW_ALL = True    
+CORS_ALLOW_CREDENTIALS = True
 
 CSRF_COOKIE_SECURE=True
 SESSION_COOKIE_SECURE=True
 
 APPENGINE_URL = os.getenv('APPENGINE_URL')
+print('#'*50)
+print()
+print()
+print("APPENGINE URL:", APPENGINE_URL)
+print()
+print()
+print('#'*50)
 if os.getenv('APPENGINE_URL'):
     # Ensure a scheme is present in the URL before it's processed.
     if not urlparse(APPENGINE_URL).scheme:
         APPENGINE_URL = f'https://{APPENGINE_URL}'
 
-    ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc]
-    CSRF_TRUSTED_ORIGINS = [APPENGINE_URL]
+    # ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc]
+    # CSRF_TRUSTED_ORIGINS = [APPENGINE_URL]
     SECURE_SSL_REDIRECT = True
 
+CSRF_TRUSTED_ORIGINS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -134,16 +144,19 @@ WSGI_APPLICATION = 'outliers_backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_DEFAULT_NAME'),
-        'USER': os.getenv('DATABASE_DEFAULT_USER'),
-        'PASSWORD': os.getenv('DATABASE_DEFAULT_PASSWORD'),
-        'HOST': os.getenv('DATABASE_DEFAULT_HOST'),
-        'PORT': os.getenv('DATABASE_DEFAULT_PORT'),
+DATABASES = {}
+
+if os.getenv('PRODUCTION') == 'FALSE':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DATABASE_DEFAULT_NAME'),
+            'USER': os.getenv('DATABASE_DEFAULT_USER'),
+            'PASSWORD': os.getenv('DATABASE_DEFAULT_PASSWORD'),
+            'HOST': os.getenv('DATABASE_DEFAULT_HOST'),
+            'PORT': os.getenv('DATABASE_DEFAULT_PORT'),
+        }
     }
-}
  
 if os.getenv('PRODUCTION') == 'TRUE' and os.getenv('GITHUB_ACTIONS_WORKFLOW') == 'FALSE':
     DATABASES = {
@@ -167,7 +180,7 @@ if os.getenv('GITHUB_ACTIONS_WORKFLOW') == 'TRUE':
             'HOST': os.getenv('DATABASE_GITHUB_ACTIONS_HOST'),
             'PORT': os.getenv('DATABASE_GITHUB_ACTIONS_PORT'),
         }
-}
+    }
 
 if os.getenv('USE_CLOUD_SQL_AUTH_PROXY') == 'TRUE':
     DATABASES['default']['HOST'] = '127.0.0.1'
