@@ -1,6 +1,7 @@
+from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+# from rest_framework.permissions import AllowAny
 
 from users.models import Company, Employee
 from technologies.models import ProgrammingLanguage, Technology, Topic
@@ -42,7 +43,7 @@ class CreateOpeningView(APIView):
         if programming_languages:
             for programming_language in programming_languages:
                 try: 
-                    language = ProgrammingLanguage.objects.get(name=programming_language)
+                    language = ProgrammingLanguage.objects.get(name=programming_language.lower())
                     opening.programming_languages.add(language)
                 except Exception as e:
                     print(f"Error occurred while adding programming language '{programming_language}' to opening:")
@@ -53,7 +54,7 @@ class CreateOpeningView(APIView):
         if technologies:
             for technology in technologies:
                 try:
-                    technology = Technology.objects.get(name=technology)
+                    technology = Technology.objects.get(name=technology.lower())
                     opening.technologies.add(technology)
                 except Exception as e:
                     print(f"Error occurred while adding technology '{technology}' to opening:")
@@ -64,14 +65,18 @@ class CreateOpeningView(APIView):
         if topics:
             for topic in topics:
                 try:
-                    topic = Topic.objects.get(name=topic)
+                    topic = Topic.objects.get(name=topic.lower())
                     opening.topics.add(topic)
                 except Exception as e:
                     print(f"Error occurred while adding topic '{topic}' to opening:")
                     print(e)
                     continue
 
-        return Response(status=200)
+        # return Response(status=200)
+        return JsonResponse({
+            'status': 200,
+            'opening_id': opening.id,
+        })
 
 
 class OpeningList(APIView):
