@@ -9,17 +9,11 @@ from .base_model import BaseModel
 class Opening(BaseModel):
     opening_statuses = [
         ('Sourcing', 'Sourcing'),
-        ('Screening', 'Screening'),
         ('Interviewing', 'Interviewing'),
-        ('Selecting', 'Selecting'),
+        ('Offering', 'Offering'),
+        ('Hiring', 'Hiring'),
         ('Closed', 'Closed'),
     ]
-
-    # currencies = [
-    #     ('usd', 'USD'),
-    #     ('eur', 'EUR'),
-    #     ('krw', 'KRW'),
-    # ]
 
     company = models.ForeignKey(Company, related_name='openings', on_delete=models.CASCADE)
     created_by = models.ForeignKey(Employee, on_delete=models.CASCADE)
