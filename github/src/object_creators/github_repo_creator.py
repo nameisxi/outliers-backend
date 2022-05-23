@@ -16,6 +16,7 @@ class GithubRepoCreator:
                     defaults={
                         'repo_id': repo['id'],
                         'name': repo['name'],
+                        'pushed_at': repo['pushed_at'],
                         'stargazers_count': repo['stargazers_count'],
                         'normalized_stargazers_count': -1,
                         'forks_count': repo['forks_count'], 

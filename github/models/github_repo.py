@@ -1,12 +1,12 @@
 from django.db import models
 from technologies.models import ProgrammingLanguage, Technology, Topic
-# from .github_account import GithubAccount
 from .base_model import BaseModel
 
 
 class GithubRepo(BaseModel):
     repo_id = models.BigIntegerField()
     name = models.CharField(max_length=255)
+    pushed_at = models.DateTimeField(null=True)
 
     stargazers_count = models.IntegerField()
     normalized_stargazers_count = models.FloatField()
@@ -22,11 +22,6 @@ class GithubRepo(BaseModel):
 
     repo_html_url = models.CharField(max_length=255)
     repo_api_url = models.CharField(max_length=255)
-
-
-# class GithubRepoContributor(BaseModel):
-#     account = models.ForeignKey('github.GithubAccount', related_name='contributionsjoin', on_delete=models.CASCADE)
-#     repo = models.ForeignKey('GithubRepo', related_name='contributors', on_delete=models.CASCADE)
 
 
 class GithubRepoLanguage(BaseModel):
