@@ -40,4 +40,3 @@ class GithubAccountSerializer(serializers.ModelSerializer):
         model = GithubAccount
         fields = ['id', 'programming_languages', 'technologies', 'topics']
         depth = 1
-        

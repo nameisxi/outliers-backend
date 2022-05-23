@@ -5,7 +5,7 @@ from technologies.serializers import *
 from github.serializers import GithubAccountSerializer
 
 
-class CandidateSerializer(serializers.ModelSerializer):
+class CandidateListSerializer(serializers.ModelSerializer):
     name = serializers.CharField()
     location = serializers.CharField()
     email = serializers.CharField()
@@ -15,6 +15,12 @@ class CandidateSerializer(serializers.ModelSerializer):
     employer = serializers.CharField()
     github_accounts = GithubAccountSerializer(many=True, read_only=True)
 
+    class Meta:
+        model = Candidate
+        fields = '__all__'
+
+
+class CandidateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidate
         fields = '__all__'

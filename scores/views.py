@@ -20,7 +20,7 @@ def compute(request):
             'followers_following_counts_difference',
         ],
         GithubRepo: [
-            'size_in_kilobytes',
+            'size_in_bytes',
             'programming_languages_count',
             'stargazers_count',
             'forks_count',
@@ -66,8 +66,8 @@ def get_distributions(request):
                 'normalized_followers_following_counts_difference': list(GithubAccount.objects.all().values_list('normalized_followers_following_counts_difference', flat=True)),
             },
             'GithubRepo': {
-                'size_in_kilobytes': list(GithubRepo.objects.all().values_list('size_in_kilobytes', flat=True)),
-                'normalized_size_in_kilobytes': list(GithubRepo.objects.all().values_list('normalized_size_in_kilobytes', flat=True)),
+                'size_in_bytes': list(GithubRepo.objects.all().values_list('size_in_bytes', flat=True)),
+                'normalized_size_in_bytes': list(GithubRepo.objects.all().values_list('normalized_size_in_bytes', flat=True)),
                 'programming_languages_count': list(GithubRepo.objects.all().values_list('programming_languages_count', flat=True)),
                 'normalized_programming_languages_count': list(GithubRepo.objects.all().values_list('normalized_programming_languages_count', flat=True)),
                 'stargazers_count': list(GithubRepo.objects.all().values_list('stargazers_count', flat=True)),

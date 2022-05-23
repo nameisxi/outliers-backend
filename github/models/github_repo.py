@@ -4,9 +4,12 @@ from .base_model import BaseModel
 
 
 class GithubRepo(BaseModel):
+    repo_created_at = models.DateField(null=True)
+    repo_updated_at = models.DateField(null=True)
+    pushed_at = models.DateTimeField(null=True)
+    
     repo_id = models.BigIntegerField()
     name = models.CharField(max_length=255)
-    pushed_at = models.DateTimeField(null=True)
 
     stargazers_count = models.IntegerField()
     normalized_stargazers_count = models.FloatField()
@@ -15,8 +18,8 @@ class GithubRepo(BaseModel):
     watchers_count = models.IntegerField()
     normalized_watchers_count = models.FloatField()
 
-    size_in_kilobytes = models.BigIntegerField()
-    normalized_size_in_kilobytes = models.FloatField()
+    size_in_bytes = models.BigIntegerField()
+    normalized_size_in_bytes = models.FloatField()
     programming_languages_count = models.IntegerField()
     normalized_programming_languages_count = models.FloatField()
 

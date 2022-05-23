@@ -1,4 +1,4 @@
-from django.http import HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponseBadRequest
 from django.db.models import Case, When, F, Q
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -170,5 +170,13 @@ class CandidateList(ListAPIView):
         ),
     )
 
-    serializer_class = CandidateSerializer
+    serializer_class = CandidateListSerializer
     filterset_class = CandidateFilter
+
+
+class CandidateView(APIView):
+    def get(self, request, candidate_id):
+        opening = Candidate.objects.get(id=candidate_id)
+        serializer = CandidateSerializer(opening, many=False)
+
+        return Response(serializer.data)

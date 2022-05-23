@@ -2,7 +2,13 @@ import json
 
 from django.http import HttpResponse
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+
 from .src import GithubAPIScraper, GithubObjectCreator
+from .models import *
+from .serializers import *
 
 
 def scrape(request):
@@ -26,3 +32,12 @@ def populate(request):
     # populator.create_github_metadata()
 
     return HttpResponse('Done')
+
+
+class GithubAccountView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, candidate_id):
+        github_account = GithubAccount.objects.get(owner__id=candidate_id)
+        serializer = FullGithubAccountSerializer(github_account, many=False)
+
+        return Response(serializer.data)

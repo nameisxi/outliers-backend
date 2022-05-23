@@ -28,10 +28,10 @@ class GithubAccountCreator:
                     'user': None,
                     'profile': None,
                     'pre_profile': None,
-                    'work_score': -2,
-                    'popularity_score': -2,
-                    'hireability_score': -2,
-                    'fit_score': -2,
+                    'work_score': -1,
+                    'popularity_score': -1,
+                    'hireability_score': -1,
+                    'fit_score': -1,
                 }
             )
 
@@ -40,6 +40,7 @@ class GithubAccountCreator:
                 user_id=user['id'],
                 defaults={
                     'owner': candidate,
+                    'github_account_created_at': user['created_at'].split('T')[0],
                     'user_id': user['id'],
                     'username': user['login'],
                     'name': user['name'],

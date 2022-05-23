@@ -15,7 +15,7 @@ class TestNormalizer(TestCase):
             'followers_following_counts_difference',
         ],
         GithubRepo: [
-            'size_in_kilobytes',
+            'size_in_bytes',
             'programming_languages_count',
             'stargazers_count',
             'forks_count',

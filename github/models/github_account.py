@@ -10,6 +10,7 @@ class GithubAccount(BaseModel):
     owner = models.ForeignKey(Candidate, related_name='github_accounts', on_delete=models.CASCADE)
     repos = models.ManyToManyField(GithubRepo, related_name='collaborators')
 
+    github_account_created_at = models.DateField(null=True)
     user_id = models.IntegerField()
     username = models.CharField(max_length=255)
     name = models.CharField(max_length=255, null=True)

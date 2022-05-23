@@ -14,36 +14,25 @@ class GithubRepoCreator:
         return GithubRepo.objects.update_or_create(
                     repo_id=repo['id'],
                     defaults={
+                        'repo_created_at': repo['created_at'].split('T')[0],
+                        'repo_updated_at': repo['updated_at'].split('T')[0],
+                        'pushed_at': repo['pushed_at'],
                         'repo_id': repo['id'],
                         'name': repo['name'],
-                        'pushed_at': repo['pushed_at'],
                         'stargazers_count': repo['stargazers_count'],
                         'normalized_stargazers_count': -1,
                         'forks_count': repo['forks_count'], 
                         'normalized_forks_count': -1,
                         'watchers_count': repo['watchers_count'], 
                         'normalized_watchers_count': -1,
-                        'size_in_kilobytes': repo['size'], 
-                        'normalized_size_in_kilobytes': -1,
+                        'size_in_bytes': repo['size'], 
+                        'normalized_size_in_bytes': -1,
                         'programming_languages_count': 0, 
                         'normalized_programming_languages_count': -1,
                         'repo_html_url': repo['html_url'],
                         'repo_api_url': repo['url'],
                     }
                 )
-
-    # def _create_repo_contributor_object(self, github_repo, github_account):
-    #     """
-    #     Takes a dictionary object representing a Github repo from the Github REST API and saves it into the database as a GithubRepo object.
-    #     """
-    #     GithubRepoContributor.objects.update_or_create(
-    #         repo=github_repo,
-    #         account=github_account,
-    #         defaults={
-    #             'account': github_account,
-    #             'repo': github_repo
-    #         }
-    #     )
 
     def _create_repo_language_object(self, repo, github_repo, github_account):
         """

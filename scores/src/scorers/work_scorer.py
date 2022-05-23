@@ -31,7 +31,7 @@ class WorkScorer:
             return [0]
             
         normalized_average_repo_loc = 0
-        normalized_average_repo_filesize = self._average([repo.normalized_size_in_kilobytes for repo in github_account.repos.all()])
+        normalized_average_repo_filesize = self._average([repo.normalized_size_in_bytes for repo in github_account.repos.all()])
         normalized_average_repo_collaborators_count = 0
         # normalized_average_repo_language_count = self._average([c.repo.normalized_programming_languages_count for c in github_account.contributions.all()])
 
