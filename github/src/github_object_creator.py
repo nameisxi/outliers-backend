@@ -80,6 +80,7 @@ class GithubObjectCreator:
         """
         self._github_metadata_creator.calculate_programming_languages_counts()
         self._github_metadata_creator.calculate_programming_languages_shares()
+        self._github_metadata_creator.calculate_programming_languages_yearly_shares()
         self._github_metadata_creator.calculate_topics_shares()
 
     def create(self):

@@ -1,3 +1,5 @@
+from datetime import date
+
 from technologies.models import ProgrammingLanguage
 from ...models import *
 
@@ -43,7 +45,10 @@ class GithubMetadataCreator:
                         defaults={
                             'account': collaborator,
                             'language': programming_language,
-                            'language_share': -1,
+                            'language_share': -1.0,
+                            'language_share_current_year': -1.0,
+                            'language_share_second_year': -1.0,
+                            'language_share_third_year': -1.0,
                         }
                     )  
 
@@ -103,6 +108,62 @@ class GithubMetadataCreator:
             account_language.language_share = language_contributions / all_contributions
         
         GithubAccountLanguage.objects.bulk_update(account_languages, ['language_share'])
+
+        print('    - Done')
+        print()
+
+    def calculate_programming_languages_yearly_shares(self):
+        """
+        Calculates programming languages' yearly percentage share of users active repo during that year.
+        """
+
+        current_year = date.today().year
+        years = [current_year - i for i in range(3)]
+        years.reverse()
+
+        year_to_field_name = {
+            years[2]: 'language_share_current_year',
+            years[1]: 'language_share_second_year',
+            years[0]: 'language_share_third_year',
+        }
+
+        active_repo_counts = {
+            years[2]: {},
+            years[1]: {},
+            years[0]: {},
+        }
+
+        account_languages = GithubAccountLanguage.objects.all()
+
+        for year in years:
+            print(f'Calculating GithubAccountLanguage.{year_to_field_name[year]}...')
+
+            for account_language in account_languages:
+                if account_language.account.repos.count() == 0:
+                    continue
+
+                account_id = account_language.account.id
+
+                if active_repo_counts[year].get(account_id) is None:
+                    active_repo_counts[year][account_id] = account_language.account.repos.filter(
+                                                                                            repo_created_at__year__lte=year, 
+                                                                                            pushed_at__year__gte=year,
+                                                                                        ).count()
+                
+                if active_repo_counts[year][account_id] == 0:
+                    setattr(account_language, year_to_field_name[year], 0)
+                    continue
+
+                active_language_repo_counts = account_language.account.repos.filter(
+                                                                                repo_created_at__year__lte=year, 
+                                                                                pushed_at__year__gte=year, 
+                                                                                programming_languages__language=account_language.language
+                                                                            ).count()
+
+                yearly_share = active_language_repo_counts / active_repo_counts[year][account_id]
+                setattr(account_language, year_to_field_name[year], yearly_share)
+        
+        GithubAccountLanguage.objects.bulk_update(account_languages, list(year_to_field_name.values()))
 
         print('    - Done')
         print()

@@ -59,6 +59,9 @@ class GithubRepoCreator:
                 'account': github_account,
                 'language': programming_language,
                 'language_share': -1.0,
+                'language_share_current_year': -1.0,
+                'language_share_second_year': -1.0,
+                'language_share_third_year': -1.0,
             }
         )
 

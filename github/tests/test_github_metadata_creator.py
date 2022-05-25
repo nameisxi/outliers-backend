@@ -85,6 +85,5 @@ class TestGithubMetadataCreator(TestCase):
             repos_count = n_repos
             topic_count = n_repos * 1
             topic_share = topic_count / repos_count
-            print("SHARE:", topic_share)
-            print("C SHARE:", account_topic.topic_share)
+            
             assert(account_topic.topic_share == topic_share)

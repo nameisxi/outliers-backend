@@ -9,7 +9,7 @@ class GithubAccountLanguageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GithubAccountLanguage
-        fields = ['language', 'language_share']
+        fields = ['language', 'language_share', 'language_share_current_year', 'language_share_second_year', 'language_share_third_year']
         depth = 1
 
 

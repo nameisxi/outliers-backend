@@ -71,37 +71,55 @@ class CandidateListTestCase(APITestCase):
     gh_account_language1 = GithubAccountLanguage(
                                 account=gh_account1, 
                                 language=language1,
-                                language_share=0.2
+                                language_share=0.2,
+                                language_share_current_year=-1.0,
+                                language_share_second_year=-1.0,
+                                language_share_third_year=-1.0,
                             )
     gh_account_language1.save()
     gh_account_language2 = GithubAccountLanguage(
                                 account=gh_account1, 
                                 language=language2,
-                                language_share=0.1
+                                language_share=0.1,
+                                language_share_current_year=-1.0,
+                                language_share_second_year=-1.0,
+                                language_share_third_year=-1.0,
                             )
     gh_account_language2.save()
     gh_account_language3 = GithubAccountLanguage(
                                 account=gh_account2, 
                                 language=language2,
-                                language_share=0.1
+                                language_share=0.1,
+                                language_share_current_year=-1.0,
+                                language_share_second_year=-1.0,
+                                language_share_third_year=-1.0,
                             )
     gh_account_language3.save()
     gh_account_language4 = GithubAccountLanguage(
                                 account=gh_account2, 
                                 language=language3,
-                                language_share=0.01
+                                language_share=0.01,
+                                language_share_current_year=-1.0,
+                                language_share_second_year=-1.0,
+                                language_share_third_year=-1.0,
                             )
     gh_account_language4.save()
     gh_account_language5 = GithubAccountLanguage(
                                 account=gh_account3, 
                                 language=language1,
-                                language_share=0.01
+                                language_share=0.01,
+                                language_share_current_year=-1.0,
+                                language_share_second_year=-1.0,
+                                language_share_third_year=-1.0,
                             )
     gh_account_language5.save()
     gh_account_language6 = GithubAccountLanguage(
                                 account=gh_account3, 
                                 language=language3,
-                                language_share=0.7
+                                language_share=0.7,
+                                language_share_current_year=-1.0,
+                                language_share_second_year=-1.0,
+                                language_share_third_year=-1.0,
                             )
     gh_account_language6.save()
 

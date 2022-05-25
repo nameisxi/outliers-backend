@@ -40,6 +40,9 @@ class GithubAccountLanguage(BaseModel):
     account = models.ForeignKey('GithubAccount', related_name='programming_languages', on_delete=models.CASCADE)
     language = models.ForeignKey(ProgrammingLanguage, on_delete=models.CASCADE)
     language_share = models.FloatField()
+    language_share_current_year = models.FloatField()
+    language_share_second_year = models.FloatField()
+    language_share_third_year = models.FloatField()
 
 
 class GithubAccountTechnology(BaseModel):
