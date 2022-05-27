@@ -8,8 +8,13 @@ from .object_creators import GithubMetadataCreator
 
 class GithubObjectCreator:
     def __init__(self):
+        language_colors = {}
+        with open(f'./github/data/language_colors/github_language_colors.json', 'r', encoding='utf-8') as f:
+            language_colors = json.load(f)
+            language_colors = {k.lower(): v for k, v in language_colors.items()}
+
         self._github_account_creator = GithubAccountCreator()
-        self._github_repo_creator = GithubRepoCreator()
+        self._github_repo_creator = GithubRepoCreator(language_colors)
         self._github_metadata_creator = GithubMetadataCreator()
 
     def _get_newest_files_path(self, directory_path, file_type):

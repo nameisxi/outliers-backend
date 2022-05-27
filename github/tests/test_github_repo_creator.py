@@ -139,7 +139,7 @@ class TestGithubRepoCreator(TestCase):
         n_repos = 2
         n_topics = 2
         repos = self._generate_github_repo_data(n_users, n_repos, n_topics)
-        repo_creator = GithubRepoCreator()
+        repo_creator = GithubRepoCreator({})
         repo_creator.create_repos(repos)
     
         assert(GithubRepo.objects.all().count() == n_users * n_repos)

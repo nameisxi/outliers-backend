@@ -1,15 +1,10 @@
-import json
-
 from technologies.models import ProgrammingLanguage, Topic
 from ...models import *
 
 
 class GithubRepoCreator:
-    def __init__(self):
-        self._language_colors = {}
-        with open(f'./github/data/language_colors/github_language_colors.json', 'r', encoding='utf-8') as f:
-            self._language_colors = json.load(f)
-            self._language_colors = {k.lower(): v for k, v in self._language_colors.items()}
+    def __init__(self, language_colors):
+        self._language_colors = language_colors
 
     def _create_repo_object(self, repo):
         """

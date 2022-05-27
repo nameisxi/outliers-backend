@@ -7,7 +7,7 @@ from .test_github_repo_creator import TestGithubRepoCreator
 
 class TestGithubMetadataCreator(TestCase):
     repos = TestGithubRepoCreator()._generate_github_repo_data(3, 2, 2)
-    GithubRepoCreator().create_repos(repos)
+    GithubRepoCreator({}).create_repos(repos)
 
     def _generate_github_repo_language_data(self, n_users, n_repos, n_languages):
         data = {}
