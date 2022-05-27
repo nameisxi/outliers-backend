@@ -114,7 +114,7 @@ class GithubMetadataCreator:
         #                 }
         #             )  
 
-    def create_programming_languages(self, repos):
+    def create_programming_languages(self, repos, language_colors):
         """
         Gets a list of dictionary objects where each key represents a Github repo id and every value a list of programming languages from the Github REST API. This data will be used to create GithubRepoLanguage and GithubAccountLanguage objects that connect ProgrammingLanguage objects with GithubRepo objects and GithubAccount objects.
         """
@@ -130,14 +130,6 @@ class GithubMetadataCreator:
             try:
                 repo = GithubRepo.objects.get(repo_id=repo_id)
             except GithubRepo.DoesNotExist:
-                continue
-
-            try: 
-                language_colors = {}
-                with open(f'./github/data/language_colors/github_language_colors.json', 'r', encoding='utf-8') as f:
-                    language_colors = json.load(f)
-                    language_colors = {k.lower(): v for k, v in language_colors.items()}
-            except Exception as e:
                 continue
 
             self._create_language_objects(repo, languages['languages'], language_colors)

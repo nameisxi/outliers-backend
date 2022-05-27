@@ -81,9 +81,14 @@ class GithubObjectCreator:
 
         print(f'Using the following file: {file_path.split("/")[-1]}')
 
+        language_colors = {}
+        with open(f'./github/data/language_colors/github_language_colors.json', 'r', encoding='utf-8') as f:
+            language_colors = json.load(f)
+            language_colors = {k.lower(): v for k, v in language_colors.items()}
+
         with open(file_path, 'r') as f:
             repos = json.load(f)
-            self._github_metadata_creator.create_programming_languages(repos)
+            self._github_metadata_creator.create_programming_languages(repos, language_colors)
 
     def create_github_metadata(self):
         """

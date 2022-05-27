@@ -23,12 +23,12 @@ class TestGithubMetadataCreator(TestCase):
         n_languages = 2
         repos = self._generate_github_repo_language_data(n_users, n_repos, n_languages)
         metadata_creator = GithubMetadataCreator()
-        metadata_creator.create_programming_languages(repos)
+        metadata_creator.create_programming_languages(repos, {})
 
         assert(GithubRepoLanguage.objects.all().filter(language__name__startswith='test_github_metadata_creator_language_').count() == n_users * n_repos * n_languages)
         assert(GithubAccountLanguage.objects.all().filter(language__name__startswith='test_github_metadata_creator_language_').count() == n_users * n_languages)
 
-        metadata_creator.create_programming_languages(repos)
+        metadata_creator.create_programming_languages(repos, {})
 
         assert(GithubRepoLanguage.objects.all().filter(language__name__startswith='test_github_metadata_creator_language_').count() == n_users * n_repos * n_languages)
         assert(GithubAccountLanguage.objects.all().filter(language__name__startswith='test_github_metadata_creator_language_').count() == n_users * n_languages)
@@ -39,7 +39,7 @@ class TestGithubMetadataCreator(TestCase):
         n_languages = 2
         repos = self._generate_github_repo_language_data(n_users, n_repos, n_languages)
         metadata_creator = GithubMetadataCreator()
-        metadata_creator.create_programming_languages(repos)
+        metadata_creator.create_programming_languages(repos, {})
 
         metadata_creator.calculate_programming_languages_counts()
 
@@ -58,7 +58,7 @@ class TestGithubMetadataCreator(TestCase):
         n_languages = 2
         repos = self._generate_github_repo_language_data(n_users, n_repos, n_languages)
         metadata_creator = GithubMetadataCreator()
-        metadata_creator.create_programming_languages(repos)
+        metadata_creator.create_programming_languages(repos, {})
 
         metadata_creator.calculate_programming_languages_shares()
 
@@ -77,7 +77,7 @@ class TestGithubMetadataCreator(TestCase):
         n_languages = 2
         repos = self._generate_github_repo_language_data(n_users, n_repos, n_languages)
         metadata_creator = GithubMetadataCreator()
-        metadata_creator.create_programming_languages(repos)
+        metadata_creator.create_programming_languages(repos, {})
 
         metadata_creator.calculate_topics_shares()
 
