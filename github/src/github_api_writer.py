@@ -25,7 +25,7 @@ class GithubAPIWriter:
 
     def write_repos_language_data(self, repos_languages):
         current_time = datetime.now().strftime("%Y-%m-%d")
-        with open(f'./github/data/repo_languages/github_repos_languages_{current_time}.json', 'w+', encoding='utf-8') as f:
+        with open(f'./github/data/languages/github_repos_languages_{current_time}.json', 'w+', encoding='utf-8') as f:
             file_data = {}    
             file_data.update(repos_languages)
             json.dump(repos_languages, f, ensure_ascii=False, indent=4)

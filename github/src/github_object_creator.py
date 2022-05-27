@@ -38,6 +38,8 @@ class GithubObjectCreator:
             print(f'[!] No files found in {directory_path}. Aborting GithubAccounts creation.')
             return 
 
+        print(f'Using the following file: {file_path.split("/")[-1]}')
+
         with open(file_path, 'r') as f:
             users = json.load(f)
             self._github_account_creator.create_accounts(users)
@@ -54,6 +56,8 @@ class GithubObjectCreator:
             print(f'[!] No files found in {directory_path}. Aborting GithubRepos creation.')
             return 
 
+        print(f'Using the following file: {file_path.split("/")[-1]}')
+
         with open(file_path, 'r') as f:
             repos = json.load(f)
             self._github_repo_creator.create_repos(repos)
@@ -62,13 +66,15 @@ class GithubObjectCreator:
         """
         Opens a JSON file containing list of repo IDs and those repos' programming languages from Github REST API. The data will get passed to GithubMetadataCreator that saves the data into the database.
         """
-        directory_path = './github/data/repo_languages/'
+        directory_path = './github/data/languages/'
         file_type = '.json'
         file_path = self._get_newest_files_path(directory_path, file_type)
 
         if not file_path:
             print(f'[!] No files found in {directory_path}. Aborting GithubAccountLanguages and GithubRepoLanguages creation.')
             return 
+
+        print(f'Using the following file: {file_path.split("/")[-1]}')
 
         with open(file_path, 'r') as f:
             repos = json.load(f)

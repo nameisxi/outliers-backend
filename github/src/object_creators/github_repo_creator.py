@@ -1,3 +1,4 @@
+import json
 
 from technologies.models import ProgrammingLanguage, Topic
 from ...models import *
@@ -5,7 +6,10 @@ from ...models import *
 
 class GithubRepoCreator:
     def __init__(self):
-        pass
+        self._language_colors = {}
+        with open(f'./github/data/language_colors/github_language_colors.json', 'r', encoding='utf-8') as f:
+            self._language_colors = json.load(f)
+            self._language_colors = {k.lower(): v for k, v in self._language_colors.items()}
 
     def _create_repo_object(self, repo):
         """
@@ -39,7 +43,18 @@ class GithubRepoCreator:
         Creates a GithubRepoLanguage object and a GithubAccountLanguage object of a given repo language.
         """
         language = repo['language'].lower().strip()
-        programming_language, _ = ProgrammingLanguage.objects.get_or_create(name=language, defaults={'name': language})
+        try:
+            color = self._language_colors[language]['color']
+        except Exception as e:
+            color = '#ffffff'
+
+        programming_language, _ = ProgrammingLanguage.objects.get_or_create(
+            name=language, 
+            defaults={
+                'name': language,
+                'color': color,
+            }
+        )
         
         GithubRepoLanguage.objects.update_or_create(
             repo=github_repo,

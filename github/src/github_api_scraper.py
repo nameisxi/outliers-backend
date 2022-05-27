@@ -165,7 +165,7 @@ class GithubAPIScraper:
                 delta_between_last_push = current_time - pushed_at_time
                 
                 # Only repos that have been created within the last 3 years or pushed to within the last year will be counted
-                if delta_between_creation.days <= (365 * 3) or delta_between_last_push.days <= 365:
+                if delta_between_creation.days <= (365 * 3) or delta_between_last_push.days <= (365 * 3):
                     parsed_repos_data.append(parsed_repo_data)
 
             repo = {
