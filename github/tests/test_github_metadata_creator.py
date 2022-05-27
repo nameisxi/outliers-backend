@@ -13,7 +13,7 @@ class TestGithubMetadataCreator(TestCase):
         data = {}
         for user_id in range(1, n_users + 1):
             for repo_id in range(1, n_repos + 1):
-                data[int(f'{user_id}{repo_id}')] =  [{f'test_github_metadata_creator_language_{language_id}':1 for language_id in range(1, n_languages+1)}]
+                data[int(f'{user_id}{repo_id}')] =  { 'languages': {f'test_github_metadata_creator_language_{language_id}':1 for language_id in range(1, n_languages+1)}}
 
         return data
 
