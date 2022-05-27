@@ -9,16 +9,10 @@ class GithubMetadataCreator:
     def __init__(self):
         pass
 
-    def _create_language_objects(self, repo, languages):
+    def _create_language_objects(self, repo, languages, language_colors):
         """
         Creates GithubRepoLanguage and GithubAccountLanguage objects of a given repo and its programming languages.
         """
-        language_colors = {}
-
-        with open(f'./github/data/language_colors/github_language_colors.json', 'r', encoding='utf-8') as f:
-            language_colors = json.load(f)
-            language_colors = {k.lower(): v for k, v in language_colors.items()}
-
         total_contributions_count = sum(list(languages.values()))
         if total_contributions_count == 0:
             return
@@ -138,7 +132,15 @@ class GithubMetadataCreator:
             except GithubRepo.DoesNotExist:
                 continue
 
-            self._create_language_objects(repo, languages['languages'])
+            try: 
+                language_colors = {}
+                with open(f'./github/data/language_colors/github_language_colors.json', 'r', encoding='utf-8') as f:
+                    language_colors = json.load(f)
+                    language_colors = {k.lower(): v for k, v in language_colors.items()}
+            except Exception as e:
+                continue
+
+            self._create_language_objects(repo, languages['languages'], language_colors)
             
         print('    - Done')
         print()
