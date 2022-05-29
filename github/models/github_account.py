@@ -3,12 +3,14 @@ from django.db import models
 from users.models import Candidate
 from technologies.models import ProgrammingLanguage, Technology, Topic
 from .github_repo import GithubRepo
+from .github_organization import GithubOrganization
 from .base_model import BaseModel
 
 
 class GithubAccount(BaseModel):
     owner = models.ForeignKey(Candidate, related_name='github_accounts', on_delete=models.CASCADE)
     repos = models.ManyToManyField(GithubRepo, related_name='collaborators')
+    organizations = models.ManyToManyField(GithubOrganization, related_name='members')
 
     github_account_created_at = models.DateField(null=True)
     user_id = models.IntegerField()

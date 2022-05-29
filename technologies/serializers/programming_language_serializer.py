@@ -7,4 +7,3 @@ class ProgrammingLanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProgrammingLanguage
         fields = ['name', 'color']
-        

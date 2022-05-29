@@ -9,6 +9,44 @@ class GithubMetadataCreator:
     def __init__(self):
         pass
 
+    def _create_organization_object(self, organization):
+        """
+        Takes a dictionary object representing a Github organization from the Github REST API as an input and saves it into the database as a GithubOrganization object or updates an already existing object. Created or updated object will be returned.
+        """
+        return GithubOrganization.objects.update_or_create(
+                    organization_id=organization['id'],
+                    defaults={
+                        'organization_id': organization['id'],
+                        'name': organization['login'],
+                        'avatar_url': organization['avatar_url'],
+                    }
+                )
+
+    def create_organizations(self, organizations):
+        """
+        Gets a list of dictionary objects where each key represents a Github account id and every value a list of organizations from the Github REST API. This data will be used to create GithubOrganization objects.
+        """
+        print('Creating GithubOrganizations...')
+
+        i = 1
+        tenth = max(round(len(organizations.keys()) * 0.1), 1)
+
+        for user_id, orgs in organizations.items():
+            if i % tenth == 0: print(f'    {round((i / len(organizations.keys())) * 100)}%')
+            i += 1
+            
+            try:
+                account = GithubAccount.objects.get(user_id=user_id)
+            except GithubAccount.DoesNotExist:
+                continue
+                
+            for org in orgs:
+                org, _ = self._create_organization_object(org)
+                account.organizations.add(org)
+            
+        print('    - Done')
+        print()
+
     def _create_language_objects(self, repo, languages, language_colors):
         """
         Creates GithubRepoLanguage and GithubAccountLanguage objects of a given repo and its programming languages.
@@ -62,57 +100,6 @@ class GithubMetadataCreator:
                         'language_share_third_year': -1.0,
                     }
                 )  
-
-        # for repo_languages_object in languages:
-        #     total_contributions_count = sum(list(repo_languages_object.values()))
-        #     if total_contributions_count == 0:
-        #         continue
-
-        #     for language, language_contributions_count in repo_languages_object.items():
-        #         # TODO: if language_contribution_count, e.g. contribution filesize, < x, skip?
-        #         if language_contributions_count == 0:
-        #             continue
-
-        #         language = language.lower().strip()
-        #         try:
-        #             color = language_colors[language]['color']
-        #         except Exception as e:
-        #             color = '#ffffff'
-
-        #         programming_language, _ = ProgrammingLanguage.objects.update_or_create(
-        #                                                                             name=language, 
-        #                                                                             defaults={
-        #                                                                                 'name': language,
-        #                                                                                 'color': color,
-        #                                                                             }
-        #                                                                         )
-
-        #         # Add programming language relationship with each repo
-        #         GithubRepoLanguage.objects.update_or_create(
-        #             repo=repo,
-        #             language=programming_language, 
-        #             defaults={
-        #                 'repo': repo,
-        #                 'language': programming_language,
-        #                 'language_share': language_contributions_count / total_contributions_count,
-        #                 'language_contribution': language_contributions_count,
-        #             }
-        #         )
-
-        #         # Add programming language relationship with each account
-        #         for collaborator in repo.collaborators.all():
-        #             GithubAccountLanguage.objects.update_or_create(
-        #                 account=collaborator,
-        #                 language=programming_language, 
-        #                 defaults={
-        #                     'account': collaborator,
-        #                     'language': programming_language,
-        #                     'language_share': -1.0,
-        #                     'language_share_current_year': -1.0,
-        #                     'language_share_second_year': -1.0,
-        #                     'language_share_third_year': -1.0,
-        #                 }
-        #             )  
 
     def create_programming_languages(self, repos, language_colors):
         """

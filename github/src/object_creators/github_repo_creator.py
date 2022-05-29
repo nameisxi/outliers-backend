@@ -122,7 +122,6 @@ class GithubRepoCreator:
                 # Create a repo with given values, or update an existing one
                 github_repo, _ = self._create_repo_object(repo)
                 # Create a repo contributor with given values, or update an existing one
-                # self._create_repo_contributor_object(github_repo, github_account)
                 github_account.repos.add(github_repo)
                 # Add main programming language of the repo
                 if repo['language']:

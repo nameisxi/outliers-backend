@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from technologies.serializers import ProgrammingLanguageSerializer, TechnologySerializer, TopicSerializer
 from ..models import *
 from .github_account_serializer import GithubAccountLanguageSerializer, GithubAccountTechnologySerializer, GithubAccountTopicSerializer
 from .github_repo_serializer import GithubRepoSerializer
+from .github_organization_serializer import GithubOrganizationSerializer
 
 
 class FullGithubAccountSerializer(serializers.ModelSerializer):
@@ -11,6 +11,7 @@ class FullGithubAccountSerializer(serializers.ModelSerializer):
     technologies = GithubAccountTechnologySerializer(many=True, read_only=True)
     topics = GithubAccountTopicSerializer(many=True, read_only=True)
     repos = GithubRepoSerializer(many=True, read_only=True)
+    organizations = GithubOrganizationSerializer(many=True, read_only=True)
 
     class Meta:
         model = GithubAccount
