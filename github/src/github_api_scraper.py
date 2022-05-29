@@ -178,7 +178,86 @@ class GithubAPIScraper:
         print()
         
         return repos
-    
+
+    def _scrape_accounts_organization_data(self, accounts):
+        print('Scraping accounts organizations...')
+        self._get_ratelimit()
+
+        account_organizations = {}
+        current_time = datetime.now()
+        tenth = max(round(len(accounts) * 0.1), 1)
+        
+        for i, account in enumerate(accounts):
+            if (i + 1) % tenth == 0:
+                print(f'    {round(((i + 1) / len(accounts)) * 100)}% [{datetime.now()}]')
+
+            if self._api_calls_remaining < 1:
+                self._sleep_until_rate_limit_reset()
+
+            username = account['login']
+
+            try:
+                self._api_calls_remaining = self._api_calls_remaining - 1
+                orgs_data = self._api.orgs.list_for_user(username, 100, 1)
+            except Exception as e:
+                print()
+                print(f"When handling account {username} at {account['html_url']}")
+                print("Error occurred:", e)
+                print("Moving on...")
+                print()
+                
+                # Some results, such as HTTP 404 don't count towards the Github REST API's rate limit,
+                # where as some do, so we want to update the self._api_calls_remaining count.
+                self._get_ratelimit()
+                continue
+
+            parsed_orgs_data = [obj2dict(org_data) for org_data in orgs_data]
+            account_organizations[username] = parsed_orgs_data
+            
+        return account_organizations
+        
+
+    def _scrape_accounts_contribution_data(self, accounts):
+        print('Scraping accounts contributions...')
+
+        account_contributions = {}
+        current_year = datetime.now().year
+        years = [current_year - i for i in range(3)]
+            
+        tenth = max(round(len(accounts) * 0.1), 1)
+        
+        for i, account in enumerate(accounts):
+            if (i + 1) % tenth == 0:
+                    print(f'    {round(((i + 1) / len(accounts)) * 100)}% [{datetime.now()}]')
+            
+            print()
+            print(f'        {account["login"]} [{datetime.now()}]')
+            
+            account_contributions[account['login']] = []
+            
+            for year in years:
+                print(f'            {year} [{datetime.now()}]')
+                try: 
+                    url = f'https://skyline.github.com/{account["login"]}/{year}.json'
+                    result = requests.get(url)
+                    
+                    account_contributions[account['login']].append(json.loads(result.text))
+                    
+                except Exception as e:
+                    print()
+                    print(f"When handling account contributions at https://skyline.github.com/{account['login']}/{year}.json")
+                    print("Error occurred:", e)
+                    print("Moving on...")
+                    print()
+                    continue
+                    
+            if (i + 1) % tenth == 0:
+                self._writer.write_accounts_contribution_data(account_contributions)
+
+        print(' - Done')
+        print()
+                        
+        return account_contributions           
     
     def _scrape_repos_language_data(self, repos):
         print('Scraping repos languages...')

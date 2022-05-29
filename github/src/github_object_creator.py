@@ -67,6 +67,24 @@ class GithubObjectCreator:
             organizations = json.load(f)
             self._github_metadata_creator.create_organizations(organizations)
 
+    def create_github_contributions_calendars(self):
+        """
+        Opens a JSON file containing Github account ids and the contributions calendars of those accounts from Github Skyline API. The data will get passed to GithubMetadataCreator that saves the data into the database.
+        """
+        directory_path = './github/data/contributions/'
+        file_type = '.json'
+        file_path = self._get_newest_files_path(directory_path, file_type)
+
+        if not file_path:
+            print(f'[!] No files found in {directory_path}. Aborting GithubContributionsCalendars creation.')
+            return 
+
+        print(f'Using the following file: {file_path.split("/")[-1]}')
+
+        with open(file_path, 'r') as f:
+            contributions_calendars = json.load(f)
+            self._github_metadata_creator.create_contributions_calendars(contributions_calendars)
+
     def create_github_repos(self):
         """
         Opens a JSON file containing Github repos from Github REST API. The data will get passed to GithubRepoCreator that saves the data into the database.
@@ -119,6 +137,8 @@ class GithubObjectCreator:
 
     def create(self):
         self.create_github_accounts()
+        self.create_github_contributions_calendars()
+        self.create_github_organizations()
         self.create_github_repos()
         self.create_github_programming_languages()
         self.create_github_metadata()

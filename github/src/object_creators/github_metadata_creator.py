@@ -31,18 +31,74 @@ class GithubMetadataCreator:
         i = 1
         tenth = max(round(len(organizations.keys()) * 0.1), 1)
 
-        for user_id, orgs in organizations.items():
-            if i % tenth == 0: print(f'    {round((i / len(organizations.keys())) * 100)}%')
+        for username, orgs in organizations.items():
+            if i % tenth == 0: 
+                print(f'    {round((i / len(organizations.keys())) * 100)}%')
             i += 1
             
             try:
-                account = GithubAccount.objects.get(user_id=user_id)
+                account = GithubAccount.objects.get(username=username)
             except GithubAccount.DoesNotExist:
+                print(f'    [!] GithubAccount(username="{username}") not found!')
+                print('    Moving on...')
                 continue
                 
             for org in orgs:
                 org, _ = self._create_organization_object(org)
                 account.organizations.add(org)
+            
+        print('    - Done')
+        print()
+
+    def _create_contributions_calendar_object(self, contributions_calendar):
+        """
+        Takes a dictionary object representing a Github contributions calendar from the Github Skyline API as an input and saves it into the database as a GithubContributionsCalendar object or updates an already existing object. Created or updated object will be returned.
+        """        
+        contributions_count = 0
+        for week in contributions_calendar['contributions']:
+            for day in week['days']:
+                contributions_count += day['count']
+            
+
+        return GithubContributionsCalendar.objects.update_or_create(
+                    account__username=contributions_calendar['username'],
+                    year=contributions_calendar['year'],
+                    defaults={
+                        'year': contributions_calendar['year'],
+                        'daily_min': contributions_calendar['min'],
+                        'daily_max': contributions_calendar['max'],
+                        'daily_median': contributions_calendar['median'],
+                        'contributions_count': contributions_count,
+                        'contributions': contributions_calendar['contributions'],
+                    }
+                )
+
+    def create_contributions_calendars(self, contributions):
+        """
+        Gets a list of dictionary objects where each key represents a Github account id and every value a list of contribution data from the past 3 years from the Github Skyline API. This data will be used to create GithubContributionsCalendar objects.
+        """
+        print('Creating GithubContributionsCalendars...')
+
+        i = 1
+        tenth = max(round(len(contributions.keys()) * 0.1), 1)
+
+        for username, contributions_calendars in contributions.items():
+            if i % tenth == 0: print(f'    {round((i / len(contributions.keys())) * 100)}%')
+            i += 1
+            
+            try:
+                account = GithubAccount.objects.get(username=username)
+            except GithubAccount.DoesNotExist:
+                print(f'    [!] GithubAccount(username="{username}") not found!')
+                print('    Moving on...')
+                continue
+                
+            for contributions_calendar in contributions_calendars:
+                if 'contributions' not in contributions_calendar.keys(): 
+                    continue
+
+                contributions_calendar, _ = self._create_contributions_calendar_object(contributions_calendar)
+                account.contributions.add(contributions_calendar)
             
         print('    - Done')
         print()
@@ -117,6 +173,8 @@ class GithubMetadataCreator:
             try:
                 repo = GithubRepo.objects.get(repo_id=repo_id)
             except GithubRepo.DoesNotExist:
+                print(f'    [!] GithubRepo(repo_id={repo_id}) not found!')
+                print('    Moving on...')
                 continue
 
             self._create_language_objects(repo, languages['languages'], language_colors)

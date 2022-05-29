@@ -23,6 +23,16 @@ class GithubAPIWriter:
         with open(f'./github/data/repos/github_repos_{current_time}.json', 'w+', encoding='utf-8') as f:
             json.dump(repos, f, ensure_ascii=False, indent=4)
 
+    def write_accounts_contribution_data(self, contributions):
+        current_time = datetime.now().strftime("%Y-%m-%d")
+        with open(f'./github/data/contributions/github_contributions_{current_time}.json', 'w+', encoding='utf-8') as f:
+            json.dump(contributions, f, ensure_ascii=False, indent=4)
+        
+    def write_accounts_organization_data(self, organizations):
+        current_time = datetime.now().strftime("%Y-%m-%d")
+        with open(f'./github/data/organizations/github_organizations_{current_time}.json', 'w+', encoding='utf-8') as f:
+            json.dump(organizations, f, ensure_ascii=False, indent=4)
+
     def write_repos_language_data(self, repos_languages):
         current_time = datetime.now().strftime("%Y-%m-%d")
         with open(f'./github/data/languages/github_repos_languages_{current_time}.json', 'w+', encoding='utf-8') as f:
