@@ -6,7 +6,8 @@ from ..models import Opening
 
 
 class OpeningSerializer(serializers.ModelSerializer):
-    created_by = EmployeeSerializer()
+    opening_created_by = EmployeeSerializer()
+    opening_updated_by = EmployeeSerializer()
     programming_languages = ProgrammingLanguageSerializer(many=True)
 
     class Meta:

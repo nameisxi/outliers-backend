@@ -16,7 +16,8 @@ class Opening(BaseModel):
     ]
 
     company = models.ForeignKey(Company, related_name='openings', on_delete=models.CASCADE)
-    created_by = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    opening_created_by = models.ForeignKey(Employee, related_name='created_openings', on_delete=models.CASCADE)
+    opening_updated_by = models.ForeignKey(Employee, related_name='updated_openings', on_delete=models.CASCADE, null=True)
     # location = models.ForeignKey(OpeningLocation, on_delete=models.CASCADE, null=True)
 
     status = models.CharField(max_length=255, choices=opening_statuses)
@@ -25,7 +26,7 @@ class Opening(BaseModel):
     description = models.TextField(null=True)
 
     years_of_experience_min = models.IntegerField()
-    years_of_experience_max = models.IntegerField(null=True)
+    years_of_experience_max = models.IntegerField()
     programming_languages = models.ManyToManyField(ProgrammingLanguage, related_name='openings')
     technologies = models.ManyToManyField(Technology, related_name='openings')
     topics = models.ManyToManyField(Topic, related_name='openings')
