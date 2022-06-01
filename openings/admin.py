@@ -4,7 +4,7 @@ from .models import *
 
 
 class OpeningAdmin(admin.ModelAdmin):
-    list_display = ('get_company', 'title', 'status', 'years_of_experience_min', 'years_of_experience_max', 'created_at', 'updated_at', )
+    list_display = ('get_company', 'title', 'status', 'years_of_experience_min', 'years_of_experience_max', 'created_at', 'updated_at', 'is_deleted', )
 
     @admin.display()
     def get_company(self, obj):

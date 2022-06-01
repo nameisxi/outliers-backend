@@ -206,7 +206,12 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
+# Required to be able to use the DATETIME_FORMAT below for Django admin.
+USE_L10N = False
 USE_TZ = True
+
+# Just for Django admin.
+DATETIME_FORMAT = 'Y-m-d H:i:s'
 
 
 # Static files (CSS, JavaScript, Images)

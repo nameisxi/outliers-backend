@@ -29,7 +29,7 @@ class CompanyAdmin(admin.ModelAdmin):
 
 
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'company', 'created_at', 'updated_at', 'last_visit')
+    list_display = ('user', 'get_company', 'created_at', 'updated_at', 'last_visit')
 
     @admin.display()
     def get_company(self, obj):
