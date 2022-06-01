@@ -12,7 +12,7 @@ class CompanyAdmin(admin.ModelAdmin):
     list_display = ('name', 'created_at', 'updated_at')
 
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'company', 'created_at', 'updated_at')
+    list_display = ('user', 'company', 'created_at', 'updated_at', 'last_visit')
 
 
 admin.site.unregister(User)

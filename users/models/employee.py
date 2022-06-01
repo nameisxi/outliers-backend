@@ -8,3 +8,4 @@ from .company import Company
 class Employee(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, related_name='employees', on_delete=models.CASCADE)
+    last_visit = models.DateTimeField(null=True)
