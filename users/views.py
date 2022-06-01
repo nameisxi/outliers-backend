@@ -84,6 +84,10 @@ class EmployeeSignupView(APIView):
     permission_classes = [AllowAny]
     
     def post(self, request):
+        name = request.data['name'].strip()
+        if not name:
+            return HttpResponseBadRequest(f'Invalid name {name}')
+
         email_address = _parse_and_validate_email_address(request.data['email'])
         email_address_domain = _get_email_address_domain(email_address)
         if (not email_address) or (not email_address_domain):
@@ -104,6 +108,7 @@ class EmployeeSignupView(APIView):
             return HttpResponseBadRequest(f'Invalid email address {email_address}')
         
         user = User.objects.create_user(
+            first_name=name,
             username=email_address,
             email=email_address, 
             password=password,
