@@ -31,6 +31,7 @@ class Opening(BaseModel):
     technologies = models.ManyToManyField(Technology, related_name='openings')
     topics = models.ManyToManyField(Topic, related_name='openings')
 
+    is_deleted = models.BooleanField(default=False)
     # base_compensation_min = models.IntegerField(null=True)
     # base_compensation_max = models.IntegerField(null=True)
     # base_compensation_currency = models.CharField(max_length=3, choices=currencies)

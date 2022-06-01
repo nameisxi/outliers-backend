@@ -7,4 +7,5 @@ urlpatterns = [
     path('<int:opening_id>/', views.OpeningList.as_view()),
     path('create/', views.CreateOpeningView.as_view()),
     path('update/<int:opening_id>/', views.UpdateOpeningView.as_view()),
+    path('delete/<int:opening_id>/', views.DeleteOpeningView.as_view()),
 ]

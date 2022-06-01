@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 
 from django.http import JsonResponse
 from rest_framework.views import APIView
@@ -122,7 +122,7 @@ class UpdateOpeningView(APIView):
                 'message': 'Opening not found.',
             })
 
-        Opening.objects.filter(id=opening_id).update(
+        Opening.objects.filter(id=opening_id, company=company).update(
             company=company,
             opening_created_by=opening.opening_created_by,
             opening_updated_by=employee,
@@ -132,7 +132,7 @@ class UpdateOpeningView(APIView):
             description=request.data.get('description', opening.description),
             years_of_experience_min=request.data.get('years_of_experience_min', opening.years_of_experience_min) or 0,
             years_of_experience_max=request.data.get('years_of_experience_max', opening.years_of_experience_max) or 100,
-            updated_at=datetime.now(),
+            updated_at=timezone.now(),
         )
 
         programming_languages = request.data.get('programming_languages', None)
@@ -201,6 +201,36 @@ class UpdateOpeningView(APIView):
         })
 
 
+class DeleteOpeningView(APIView):
+    def patch(self, request, opening_id):
+        # TODO: pass data to serializer and use serialized_data.is_valid(). Reference: https://stackoverflow.com/questions/39185912/can-we-use-serializer-class-attribute-with-apiviewdjango-rest-framework 
+        try:
+            employee = Employee.objects.get(user=request.user)
+        except Employee.DoesNotExist:
+            return JsonResponse({
+                'status': 404,
+                'message': 'Employee not found.',
+            })
+
+        try:
+            company = Company.objects.get(employees=employee)
+        except Company.DoesNotExist:
+            return JsonResponse({
+                'status': 404,
+                'message': 'Company not found.',
+            })
+
+        Opening.objects.filter(id=opening_id, company=company).update(
+            opening_updated_by=employee,
+            updated_at=timezone.now(),
+            is_deleted=True,
+        )
+
+        return JsonResponse({
+            'status': 200,
+        })
+
+
 class OpeningList(APIView):
     """
     Returns a list of Opening objects, belonging to a Company, for a logged in Employee.
@@ -235,7 +265,7 @@ class OpeningList(APIView):
 
             return Response(serializer.data)
 
-        openings = Opening.objects.filter(company=company)
+        openings = Opening.objects.filter(company=company, is_deleted=False)
         serializer = OpeningSerializer(openings, many=True)
 
         return Response(serializer.data)

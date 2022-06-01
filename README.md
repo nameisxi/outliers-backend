@@ -4,7 +4,7 @@ Outliers helps startups find engineering leads using openly available data from 
 
 # Requirements
 
-- Python >= 3.6
+- Python >= 3.9
 - PostgreSQL
 
 
@@ -22,25 +22,10 @@ Outliers helps startups find engineering leads using openly available data from 
 > touch .env
 ```
 
-And add the following configurations to it:
-```
-# Django configs
-SECRET_KEY=[Ask from Tuomas]
-
-# DB configs
-DATABASE_DEFAULT_NAME=mydbname
-DATABASE_DEFAULT_USER=mydbusername
-DATABASE_DEFAULT_PASSWORD=mydbpassword
-DATABASE_DEFAULT_HOST=127.0.0.1
-DATABASE_DEFAULT_PORT=5432
-
-# Github REST API configs
-GITHUB_PERSONAL_ACCESS_TOKEN=[Ask from Tuomas]
-```
+And add the configurations to it.
 
 3. Run Django DB migrations:
 ```
-> python3 manage.py makemigrations
 > python3 manage.py migrate
 ```
 
