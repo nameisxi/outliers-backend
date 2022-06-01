@@ -10,7 +10,7 @@ env_variables:
 
 handlers:
 - url: /static
-  static_dir: staticfiles/
+  static_dir: staticfiles
 
 - url: /.*
   script: auto
