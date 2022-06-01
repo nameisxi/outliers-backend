@@ -1,7 +1,8 @@
+from django.utils import timezone
 from django.http import HttpResponseBadRequest
 from django.db.models import Case, When, F, Q
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, update_last_login
 
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
@@ -107,6 +108,7 @@ class EmployeeSignupView(APIView):
             email=email_address, 
             password=password,
         )
+        user.last_login = timezone.now()
         user.save()
 
         employee = Employee(user=user, company=company)
@@ -127,6 +129,7 @@ class UserLoginView(APIView):
         )
 
         if user is not None:
+            update_last_login(None, user)
             token = Token.objects.get(user=user)
             
             return Response({"Token": token.key})
