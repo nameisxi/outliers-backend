@@ -32,13 +32,17 @@ class TestEmployeeSignupView(APITestCase):
     def test_signup(self):
         factory = APIRequestFactory()
         view = EmployeeSignupView.as_view()
+
+        name = 'Test Name'
         email = 'test@testcompany.com'
         password = 'test1234'
         data = {
+            'name': name,
             'email': email,
             'password1': password,
             'password2': password,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -51,13 +55,17 @@ class TestEmployeeSignupView(APITestCase):
     def test_signup_unknown_email_domain(self):
         factory = APIRequestFactory()
         view = EmployeeSignupView.as_view()
+
+        name = 'Test Name'
         email = 'test@random.com'
         password = 'test1234'
         data = {
+            'name': name,
             'email': email,
             'password1': password,
             'password2': password,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -69,13 +77,17 @@ class TestEmployeeSignupView(APITestCase):
     def test_signup_already_used_email_address(self):
         factory = APIRequestFactory()
         view = EmployeeSignupView.as_view()
+
+        name = 'Test Name'
         email = 'test@testcompanysales.com'
         password = 'test1234'
         data = {
+            'name': name,
             'email': email,
             'password1': password,
             'password2': password,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -85,10 +97,12 @@ class TestEmployeeSignupView(APITestCase):
         assert(Company.objects.filter(employees__user=User.objects.get(email=email)).count() == 1)
 
         data = {
+            'name': name,
             'email': email,
             'password1': password,
             'password2': password,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -100,13 +114,17 @@ class TestEmployeeSignupView(APITestCase):
     def test_signup_missing_email_address(self):
         factory = APIRequestFactory()
         view = EmployeeSignupView.as_view()
+        
+        name = 'Test Name'
         email = ''
         password = 'test1234'
         data = {
-            'email': '',
+            'name': name,
+            'email': email,
             'password1': password,
             'password2': password,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -117,10 +135,12 @@ class TestEmployeeSignupView(APITestCase):
 
         email = None
         data = {
+            'name': name,
             'email': email,
             'password1': password,
             'password2': password,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -131,14 +151,18 @@ class TestEmployeeSignupView(APITestCase):
     def test_signup_unmatching_passwords(self):
         factory = APIRequestFactory()
         view = EmployeeSignupView.as_view()
+        
+        name = 'Test Name'
         email = 'test@testcompanymarketing.com'
         password1 = 'test1234'
         password2 = 'test4321'
         data = {
+            'name': name,
             'email': email,
             'password1': password1,
             'password2': password2,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -150,13 +174,17 @@ class TestEmployeeSignupView(APITestCase):
     def test_signup_too_short_password(self):
         factory = APIRequestFactory()
         view = EmployeeSignupView.as_view()
+
+        name = 'Test Name'
         email = 'test@testcompanymarketing.com'
         password = 'test123'
         data = {
+            'name': name,
             'email': email,
             'password1': password,
             'password2': password,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -168,14 +196,18 @@ class TestEmployeeSignupView(APITestCase):
     def test_signup_missing_password(self):
         factory = APIRequestFactory()
         view = EmployeeSignupView.as_view()
+
+        name = 'Test Name'
         email = 'test@testcompanymarketing.com'
         password1 = ''
         password2 = 'test1234'
         data = {
-            'email': '',
+            'name': name,
+            'email': email,
             'password1': password1,
             'password2': password2,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -187,10 +219,12 @@ class TestEmployeeSignupView(APITestCase):
         password1 = 'test1234'
         password2 = ''
         data = {
-            'email': '',
+            'name': name,
+            'email': email,
             'password1': password1,
             'password2': password2,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -202,10 +236,12 @@ class TestEmployeeSignupView(APITestCase):
         password1 = ''
         password2 = ''
         data = {
+            'name': name,
             'email': '',
             'password1': password1,
             'password2': password2,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -217,10 +253,12 @@ class TestEmployeeSignupView(APITestCase):
         password1 = None
         password2 = 'test1234'
         data = {
+            'name': name,
             'email': '',
             'password1': password1,
             'password2': password2,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -232,10 +270,12 @@ class TestEmployeeSignupView(APITestCase):
         password1 = 'test1234'
         password2 = None
         data = {
+            'name': name,
             'email': '',
             'password1': password1,
             'password2': password2,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
@@ -247,10 +287,12 @@ class TestEmployeeSignupView(APITestCase):
         password1 = None
         password2 = None
         data = {
+            'name': name,
             'email': '',
             'password1': password1,
             'password2': password2,
         }
+
         request = factory.post('/employee/signup/', data, format='json')
         response = view(request)
 
