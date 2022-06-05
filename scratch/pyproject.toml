@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "scratch"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+notebook = "^6.4.11"
+jupyterlab = "^3.4.2"
+gql = {extras = ["all"], version = "^3.3.0"}
+jsonpointer = "^2.3"
+
+[tool.poetry.dev-dependencies]
+black = "^22.3.0"
+
+[tool.black]
+line-length = 100
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
