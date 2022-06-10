@@ -9,7 +9,7 @@ from .test_github_account_creator import TestGithubAccountCreator
 
 class TestGithubRepoCreator(TestCase):
     users = TestGithubAccountCreator()._generate_github_user_data(3)
-    GithubAccountCreator().create_accounts(users)
+    GithubAccountCreator().create_accounts(users, '2022-06-08')
 
     def _generate_topics(self, n_topics):
         random_topics = [f'test_github_repo_creator_topic-{i}' for i in range(1, n_topics+1)]
@@ -90,7 +90,7 @@ class TestGithubRepoCreator(TestCase):
             "clone_url": "",
             "svn_url": "",
             "homepage": None,
-            "size": 1,
+            "size": 1000,
             "stargazers_count": 0,
             "watchers_count": 0,
             "language": "test_github_repo_creator_language",
@@ -140,7 +140,7 @@ class TestGithubRepoCreator(TestCase):
         n_topics = 2
         repos = self._generate_github_repo_data(n_users, n_repos, n_topics)
         repo_creator = GithubRepoCreator({})
-        repo_creator.create_repos(repos)
+        repo_creator.create_repos(repos, '2022-06-08')
     
         assert(GithubRepo.objects.all().count() == n_users * n_repos)
         # assert(GithubRepoContributor.objects.all().count() == n_users * n_repos)
@@ -149,7 +149,7 @@ class TestGithubRepoCreator(TestCase):
         assert(GithubRepoTopic.objects.all().count() == n_users * n_repos * n_topics)
         assert(GithubAccountTopic.objects.all().filter(topic__name__startswith='test_github_repo_creator_topic-').count() == n_users * n_topics)
 
-        repo_creator.create_repos(repos)
+        repo_creator.create_repos(repos, '2022-06-08')
 
         assert(GithubRepo.objects.all().count() == n_users * n_repos)
         # assert(GithubRepoContributor.objects.all().count() == n_users * n_repos)

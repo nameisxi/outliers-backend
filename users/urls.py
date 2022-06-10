@@ -11,5 +11,4 @@ urlpatterns = [
     path('initialize/', views.initialize),
     path('candidates/', views.CandidateList.as_view()),
     path('candidates/<int:candidate_id>/', views.CandidateView.as_view()),
-    
 ]

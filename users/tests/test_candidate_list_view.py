@@ -31,6 +31,7 @@ class CandidateListTestCase(APITestCase):
     candidate3.save()
 
     fields = {
+        'account_created_at': '2022-06-08',
         'user_id': -1,
         'username': 'test',
         'name': 'test',
@@ -39,18 +40,9 @@ class CandidateListTestCase(APITestCase):
         'website': 'test',
         'company': 'test',
         'hireable': True,
-        'repos_count': 1,
-        'normalized_repos_count': -1,
-        'gists_count': 1,
-        'normalized_gists_count': -1,
-        'contributions_count': 1,
-        'normalized_contributions_count': -1,
         'followers_count': 1,
-        'normalized_followers_count': -1,
-        'followers_following_counts_difference': 1,
-        'normalized_followers_following_counts_difference': -1,
-        'profile_html_url':'test',
-        'profile_api_url': 'test',
+        'following_count': 2,
+        'profile_html_url':'http://www.github.com/test',
     }
     gh_account1 = GithubAccount(**fields)
     gh_account1.owner = candidate1

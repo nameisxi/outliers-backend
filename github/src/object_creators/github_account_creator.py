@@ -1,6 +1,3 @@
-import json
-from github.models import github_account
-
 from users.models import Candidate
 from ...models import GithubAccount
 
@@ -9,7 +6,14 @@ class GithubAccountCreator:
     def __init__(self):
         pass
 
-    def create_accounts(self, users): 
+    def _update_field(self, object, fields_and_values):
+        for field, value in fields_and_values.items():
+            if not getattr(object, field) or (value and getattr(object, field) != value):
+                object.__dict__[field] = value
+
+        return object
+
+    def create_accounts(self, users, data_scraped_at): 
         """
         Takes a list of Github REST API JSON objects representing Github user accounts. These JSON objects are used to create GithubAccount objects that will be connected to Candidate objects.
         """  
@@ -22,7 +26,7 @@ class GithubAccountCreator:
                 print(f'    {round(((i + 1) / len(users)) * 100)}%')
 
             # Create Candidate object if no Github account with the user_id exists
-            candidate, _ = Candidate.objects.update_or_create(
+            candidate, _ = Candidate.objects.get_or_create(
                 github_accounts__user_id=user['id'],
                 defaults={
                     'user': None,
@@ -35,34 +39,38 @@ class GithubAccountCreator:
                 }
             )
 
+            # TODO: remove tmp solution below
+            if not user.get('followers'):
+                user['followers'] = -1
+            if not user.get('following'):
+                user['following'] = -1
+
             # Create GithubAccount object if no Github account with the user_id exists 
-            GithubAccount.objects.update_or_create(
+            fields_and_values = {
+                'owner': candidate,
+                'account_scraped_at': data_scraped_at,
+                'account_created_at': user['created_at'].split('T')[0],
+                'user_id': user['id'],
+                'username': user['login'],
+                'name': user['name'],
+                'location': user['location'],
+                'email': user['email'],
+                'website': user['blog'],
+                'company': user['company'],
+                'hireable': user['hireable'],
+                'profile_html_url': user['html_url'],
+                'followers_count': user['followers'],
+                'following_count': user['following'],
+            }
+            account, created = GithubAccount.objects.get_or_create(
                 user_id=user['id'],
-                defaults={
-                    'owner': candidate,
-                    'github_account_created_at': user['created_at'].split('T')[0],
-                    'user_id': user['id'],
-                    'username': user['login'],
-                    'name': user['name'],
-                    'location': user['location'],
-                    'email': user['email'],
-                    'website': user['blog'],
-                    'company': user['company'],
-                    'hireable': user['hireable'],
-                    'repos_count': user['public_repos'],
-                    'normalized_repos_count': -1,
-                    'gists_count': user['public_gists'],
-                    'normalized_gists_count': -1,
-                    'contributions_count': user['contributions_count'],
-                    'normalized_contributions_count': -1,
-                    'followers_count': user['followers'],
-                    'normalized_followers_count': -1,
-                    'followers_following_counts_difference': user['followers'] - user['following'],
-                    'normalized_followers_following_counts_difference': -1,
-                    'profile_html_url': user['html_url'],
-                    'profile_api_url': user['url'],
-                }
+                defaults=fields_and_values
             )
 
-        print('    - Done')
+        if not created:
+            account = self._update_field(account, fields_and_values)
+            account.save()
+
+        print('    - Done:')
+        print(f'        GithubAccount.count() = {GithubAccount.objects.count()}')
         print()

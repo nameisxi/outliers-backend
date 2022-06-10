@@ -9,6 +9,7 @@ class Candidate(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     profile = models.OneToOneField(CandidateProfile, related_name='candidate', on_delete=models.CASCADE, null=True)
     pre_profile = models.OneToOneField(CandidatePreProfile, related_name='candidate', on_delete=models.CASCADE, null=True)
+    #TODO: remove models.CASCADE
     # github_account = models.OneToOneField(GithubAccount, related_name='candidate', on_delete=models.CASCADE, null=True)
 
     work_score = models.FloatField()

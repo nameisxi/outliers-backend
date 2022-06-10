@@ -52,12 +52,12 @@ class TestGithubAccountCreator(TestCase):
     def test_create_accounts(self):
         users = self._generate_github_user_data(3)
         account_creator = GithubAccountCreator()
-        account_creator.create_accounts(users)
+        account_creator.create_accounts(users, '2022-06-08')
 
         assert(GithubAccount.objects.all().filter(user_id__gte=1).count() == 3)
         assert(Candidate.objects.all().filter(github_accounts__user_id__gte=1).count() == 3)
 
-        account_creator.create_accounts(users)
+        account_creator.create_accounts(users, '2022-06-08')
 
         assert(GithubAccount.objects.all().filter(user_id__gte=1).count() == 3)
         assert(Candidate.objects.all().filter(github_accounts__user_id__gte=1).count() == 3)

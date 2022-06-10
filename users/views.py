@@ -146,7 +146,7 @@ class CandidateList(ListAPIView):
     """
     Returns a list of Candidate objects matching given filters.
     """
-    queryset = Candidate.objects.annotate(
+    queryset = Candidate.objects.exclude(work_score__isnull=True).annotate(
         name=Case(
             When(github_accounts__name__isnull=False, then='github_accounts__name'),
             default=None,

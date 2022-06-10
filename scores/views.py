@@ -7,76 +7,78 @@ from github.models import GithubAccount, GithubRepo
 from .src import Normalizer, Scorer
 
 
+def get_accounts():
+    accounts = GithubAccount.objects.all()
+    excluded_ids = []
+
+    for account in accounts:
+        if account.contributions_count == 0 or account.repos_count == 0 or account.codebase_size < account.repos_count * 1000 or account.language_count == 0:
+            excluded_ids.append(account.id)
+
+    accounts = accounts.exclude(id__in=excluded_ids)
+
+    return accounts, excluded_ids
+
 def compute(request):
     """
     Executes the ranking score computation pipeline.
-    """
-    objects_and_fields = {
-        GithubAccount: [
-            'repos_count',
-            'gists_count',
-            'contributions_count',
-            'followers_count',
-            'followers_following_counts_difference',
-        ],
-        GithubRepo: [
-            'size_in_bytes',
-            'programming_languages_count',
-            'stargazers_count',
-            'forks_count',
-            'watchers_count',
-        ],
-    }
+    """    
+    accounts, excluded_github_ids = get_accounts()
+
+    fields = [
+        'contributions_count',
+        'repos_count',
+        'codebase_size',
+        'language_count',
+        'topic_count',
+        'stargazer_count',
+        'average_stargazer_count',
+        'fork_count',
+        'average_fork_count',
+        'watcher_count',
+        'average_watcher_count',
+        'average_codebase_size',
+        'average_language_count',
+        'follower_following_count_difference',
+    ]
 
     # Normalize given objects' fields
     normalizer = Normalizer()
-    normalizer.normalize_fields(objects_and_fields)
+    normalizer.normalize_fields(GithubAccount, accounts, fields)
+
+    candidates = Candidate.objects.exclude(github_accounts__id__in=excluded_github_ids)
 
     # Compute ranking scores for Candidate objects
     scorer = Scorer()
-    scorer.compute_scores()
+    scorer.compute_scores(candidates)
 
-    avg_work_score = Candidate.objects.all().aggregate(Avg('work_score'))['work_score__avg']
-    avg_popularity_score = Candidate.objects.all().aggregate(Avg('popularity_score'))['popularity_score__avg']
-    avg_hireability_score = Candidate.objects.all().aggregate(Avg('hireability_score'))['hireability_score__avg']
-    avg_fit_score = Candidate.objects.all().aggregate(Avg('fit_score'))['fit_score__avg']
-    return HttpResponse(f'Work score avg: {avg_work_score}, Popularity score avg: {avg_popularity_score}, Hireability score avg: {avg_hireability_score}, Fit score avg: {avg_fit_score}')
+    avg_work_score = candidates.aggregate(Avg('work_score'))['work_score__avg']
+    avg_popularity_score = candidates.aggregate(Avg('popularity_score'))['popularity_score__avg']
+    avg_hireability_score = candidates.aggregate(Avg('hireability_score'))['hireability_score__avg']
+    avg_fit_score = candidates.aggregate(Avg('fit_score'))['fit_score__avg']
+    return HttpResponse(f'Candidate count: {len(candidates)}, Work score avg: {avg_work_score}, Popularity score avg: {avg_popularity_score}, Hireability score avg: {avg_hireability_score}, Fit score avg: {avg_fit_score}')
 
 def get_distributions(request):
     """
     Returns the distributions and the normalized versions of those distributions of the fields used to compute the ranking scores.
     """
+    # work_scores = {}
+    
+    # for candidate in Candidate.objects.exclude(work_score__isnull=True).all():
+    #     for account in candidate.github_accounts.all():
+    #         work_scores[account.user_id] = candidate.work_score
+
+    work_scores = []
+    popularity_scores = []
+
+    for candidate in Candidate.objects.exclude(work_score__isnull=True, work_score__lt=0).all():
+        for account in candidate.github_accounts.all():
+            work_scores.append(candidate.work_score)
+            popularity_scores.append(candidate.popularity_score)
+
     distributions = {
-            'Candidate': {
-                'work_score': list(Candidate.objects.all().values_list('work_score', flat=True)),
-                'popularity_score': list(Candidate.objects.all().values_list('popularity_score', flat=True)),
-                # 'hireability_score': list(Candidate.objects.all().values_list('hireability_score', flat=True)),
-                # 'fit_score': list(Candidate.objects.all().values_list('fit_score', flat=True)),
-            },
-            'GithubAccount': {
-                'repos_count': list(GithubAccount.objects.all().values_list('repos_count', flat=True)),
-                'normalized_repos_count': list(GithubAccount.objects.all().values_list('normalized_repos_count', flat=True)),
-                'gists_count': list(GithubAccount.objects.all().values_list('gists_count', flat=True)),
-                'normalized_gists_count': list(GithubAccount.objects.all().values_list('normalized_gists_count', flat=True)),
-                'contributions_count': list(GithubAccount.objects.all().values_list('contributions_count', flat=True)),
-                'normalized_contributions_count': list(GithubAccount.objects.all().values_list('normalized_contributions_count', flat=True)),
-                'followers_count': list(GithubAccount.objects.all().values_list('followers_count', flat=True)),
-                'normalized_followers_count': list(GithubAccount.objects.all().values_list('normalized_followers_count', flat=True)),
-                'followers_following_counts_difference': list(GithubAccount.objects.all().values_list('followers_following_counts_difference', flat=True)),
-                'normalized_followers_following_counts_difference': list(GithubAccount.objects.all().values_list('normalized_followers_following_counts_difference', flat=True)),
-            },
-            'GithubRepo': {
-                'size_in_bytes': list(GithubRepo.objects.all().values_list('size_in_bytes', flat=True)),
-                'normalized_size_in_bytes': list(GithubRepo.objects.all().values_list('normalized_size_in_bytes', flat=True)),
-                'programming_languages_count': list(GithubRepo.objects.all().values_list('programming_languages_count', flat=True)),
-                'normalized_programming_languages_count': list(GithubRepo.objects.all().values_list('normalized_programming_languages_count', flat=True)),
-                'stargazers_count': list(GithubRepo.objects.all().values_list('stargazers_count', flat=True)),
-                'normalized_stargazers_count': list(GithubRepo.objects.all().values_list('normalized_stargazers_count', flat=True)),
-                'forks_count': list(GithubRepo.objects.all().values_list('forks_count', flat=True)),
-                'normalized_forks_count': list(GithubRepo.objects.all().values_list('normalized_forks_count', flat=True)),
-                'watchers_count': list(GithubRepo.objects.all().values_list('watchers_count', flat=True)),
-                'normalized_watchers_count': list(GithubRepo.objects.all().values_list('normalized_watchers_count', flat=True)),
-            },
+        'work_score': work_scores,
+        'popularity_score': popularity_scores,
     }
 
     return JsonResponse(distributions)

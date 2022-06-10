@@ -9,6 +9,13 @@ class GithubMetadataCreator:
     def __init__(self):
         pass
 
+    def _update_field(self, object, fields_and_values):
+        for field, value in fields_and_values.items():
+            if not getattr(object, field) or (value and getattr(object, field) != value):
+                object.__dict__[field] = value
+
+        return object
+
     def _create_organization_object(self, organization):
         """
         Takes a dictionary object representing a Github organization from the Github REST API as an input and saves it into the database as a GithubOrganization object or updates an already existing object. Created or updated object will be returned.
@@ -22,7 +29,7 @@ class GithubMetadataCreator:
                     }
                 )
 
-    def create_organizations(self, organizations):
+    def create_organizations(self, organizations, data_scraped_at):
         """
         Gets a list of dictionary objects where each key represents a Github account id and every value a list of organizations from the Github REST API. This data will be used to create GithubOrganization objects.
         """
@@ -46,8 +53,13 @@ class GithubMetadataCreator:
             for org in orgs:
                 org, _ = self._create_organization_object(org)
                 account.organizations.add(org)
+
+            if len(orgs) > 0:
+                account.organizations_scraped_at = data_scraped_at
+                account.save()
             
-        print('    - Done')
+        print('    - Done:')
+        print(f'        GithubOrganization.count() = {GithubOrganization.objects.count()}')
         print()
 
     def _create_contributions_calendar_object(self, contributions_calendar):
@@ -73,7 +85,7 @@ class GithubMetadataCreator:
                     }
                 )
 
-    def create_contributions_calendars(self, contributions):
+    def create_contributions_calendars(self, contributions, data_scraped_at):
         """
         Gets a list of dictionary objects where each key represents a Github account id and every value a list of contribution data from the past 3 years from the Github Skyline API. This data will be used to create GithubContributionsCalendar objects.
         """
@@ -99,8 +111,13 @@ class GithubMetadataCreator:
 
                 contributions_calendar, _ = self._create_contributions_calendar_object(contributions_calendar)
                 account.contributions.add(contributions_calendar)
+
+            if len(contributions_calendars) > 0:
+                account.contributions_scraped_at = data_scraped_at
+                account.save()
             
-        print('    - Done')
+        print('    - Done:')
+        print(f'        GithubContributionsCalendar.count() = {GithubContributionsCalendar.objects.count()}')
         print()
 
     def _create_language_objects(self, repo, languages, language_colors):
@@ -113,6 +130,7 @@ class GithubMetadataCreator:
 
         for language, language_contributions_count in languages.items():
             # TODO: if language_contribution_count, e.g. contribution filesize, < x, skip?
+            # TODO: handle langauge_contributions_count going from x% to 0%
             if language_contributions_count == 0:
                 continue
 
@@ -123,12 +141,14 @@ class GithubMetadataCreator:
                 color = '#ffffff'
 
             programming_language, _ = ProgrammingLanguage.objects.update_or_create(
-                                                                    name=language, 
-                                                                    defaults={
-                                                                        'name': language,
-                                                                        'color': color,
-                                                                    }
-                                                                )
+                name=language, 
+                defaults={
+                    'name': language,
+                    'color': color,
+                }
+            )
+
+            language_share = language_contributions_count / total_contributions_count
 
             # Add programming language relationship with each repo
             GithubRepoLanguage.objects.update_or_create(
@@ -137,27 +157,32 @@ class GithubMetadataCreator:
                 defaults={
                     'repo': repo,
                     'language': programming_language,
-                    'language_share': language_contributions_count / total_contributions_count,
+                    'language_share': language_share,
                     'language_contribution': language_contributions_count,
                 }
             )
 
             # Add programming language relationship with each account
             for collaborator in repo.collaborators.all():
-                GithubAccountLanguage.objects.update_or_create(
+                fields_and_values = {
+                    'account': collaborator,
+                    'language': programming_language,
+                    'language_share': None,
+                    'language_share_current_year': None,
+                    'language_share_second_year': None,
+                    'language_share_third_year': None,
+                }
+                account_language, created = GithubAccountLanguage.objects.get_or_create(
                     account=collaborator,
                     language=programming_language, 
-                    defaults={
-                        'account': collaborator,
-                        'language': programming_language,
-                        'language_share': -1.0,
-                        'language_share_current_year': -1.0,
-                        'language_share_second_year': -1.0,
-                        'language_share_third_year': -1.0,
-                    }
+                    defaults=fields_and_values
                 )  
 
-    def create_programming_languages(self, repos, language_colors):
+                if not created:
+                    account_language = self._update_field(account_language, fields_and_values)
+                    account_language.save()
+
+    def create_programming_languages(self, repos, language_colors, data_scraped_at):
         """
         Gets a list of dictionary objects where each key represents a Github repo id and every value a list of programming languages from the Github REST API. This data will be used to create GithubRepoLanguage and GithubAccountLanguage objects that connect ProgrammingLanguage objects with GithubRepo objects and GithubAccount objects.
         """
@@ -177,26 +202,34 @@ class GithubMetadataCreator:
                 print('    Moving on...')
                 continue
 
+            # TODO: remove the 'languages' single-key-indentation
             self._create_language_objects(repo, languages['languages'], language_colors)
+
+            if repo:
+                repo.languages_scraped_at = data_scraped_at
+                repo.save()
             
-        print('    - Done')
+        print(f'    - Done:')
+        print(f'        ProgrammingLanguage.count() = {ProgrammingLanguage.objects.count()}')
+        print(f'        GithubRepoLanguage.count() = {GithubRepoLanguage.objects.count()}')
+        print(f'        GithubAccountLanguage.count() = {GithubAccountLanguage.objects.count()}')
         print()
 
-    def calculate_programming_languages_counts(self):
-        """
-        Calculates how many programming languages each repo has and saves the value as a database field.
-        """
-        print('Calculating GithubRepoLanguage.programming_languages_counts...')
+    # def calculate_programming_languages_counts(self):
+    #     """
+    #     Calculates how many programming languages each repo has and saves the value as a database field.
+    #     """
+    #     print('Calculating GithubRepoLanguage.programming_languages_counts...')
 
-        repos = GithubRepo.objects.all()
+    #     repos = GithubRepo.objects.all()
 
-        for repo in repos:
-            repo.programming_languages_count = repo.programming_languages.count()
+    #     for repo in repos:
+    #         repo.programming_languages_count = repo.programming_languages.count()
         
-        GithubRepo.objects.bulk_update(repos, ['programming_languages_count'])
+    #     GithubRepo.objects.bulk_update(repos, ['programming_languages_count'])
 
-        print('    - Done')
-        print()
+    #     print('    - Done')
+    #     print()
 
     def calculate_programming_languages_shares(self):
         """
@@ -211,7 +244,17 @@ class GithubMetadataCreator:
                 continue
 
             all_contributions = account_language.account.repos.aggregate(models.Sum('programming_languages__language_contribution'))['programming_languages__language_contribution__sum']
-            language_contributions = account_language.account.repos.filter(programming_languages__language=account_language.language).aggregate(models.Sum('programming_languages__language_contribution'))['programming_languages__language_contribution__sum']
+            if not all_contributions:
+                continue
+            # language_contributions = 0
+            # for repo in account_language.account.repos.filter(programming_languages__language=account_language.language):
+            
+            #     language_contributions += repo.programming_languages.filter(language=account_language.language)#.aggregate(models.Sum('language_contribution'))['language_contribution__sum']
+
+            language_contributions = GithubRepoLanguage.objects.filter(repo__collaborators__user_id=account_language.account.user_id, language=account_language.language).aggregate(models.Sum('language_contribution'))['language_contribution__sum']
+            if not language_contributions:
+                language_contributions = 0
+            
             account_language.language_share = language_contributions / all_contributions
         
         GithubAccountLanguage.objects.bulk_update(account_languages, ['language_share'])
@@ -253,19 +296,19 @@ class GithubMetadataCreator:
 
                 if active_repo_counts[year].get(account_id) is None:
                     active_repo_counts[year][account_id] = account_language.account.repos.filter(
-                                                                                            repo_created_at__year__lte=year, 
-                                                                                            pushed_at__year__gte=year,
-                                                                                        ).count()
+                        repo_created_at__year__lte=year, 
+                        pushed_at__year__gte=year,
+                    ).count()
                 
                 if active_repo_counts[year][account_id] == 0:
                     setattr(account_language, year_to_field_name[year], 0)
                     continue
 
                 active_language_repo_counts = account_language.account.repos.filter(
-                                                                                repo_created_at__year__lte=year, 
-                                                                                pushed_at__year__gte=year, 
-                                                                                programming_languages__language=account_language.language
-                                                                            ).count()
+                    repo_created_at__year__lte=year, 
+                    pushed_at__year__gte=year, 
+                    programming_languages__language=account_language.language
+                ).count()
 
                 yearly_share = active_language_repo_counts / active_repo_counts[year][account_id]
                 setattr(account_language, year_to_field_name[year], yearly_share)
@@ -284,10 +327,11 @@ class GithubMetadataCreator:
         account_topics = GithubAccountTopic.objects.all()
 
         for account_topic in account_topics:
-            repos_count = account_topic.account.repos_count
-            if repos_count == 0: continue
+            repos_count = account_topic.account.repos.count()
+            if repos_count == 0: 
+                continue
+            
             topic_count = account_topic.account.repos.filter(topics__topic=account_topic.topic).count()
-
             account_topic.topic_share = topic_count / repos_count
         
         GithubAccountTopic.objects.bulk_update(account_topics, ['topic_share'])        
