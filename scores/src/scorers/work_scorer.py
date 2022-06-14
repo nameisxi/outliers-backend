@@ -8,17 +8,6 @@ class WorkScorer:
         """
         Calculates a mathematical average for a given list.
         """
-        print()
-        print()
-        print()
-        print()
-        print()
-        print("LIST:", list)
-        print()
-        print()
-        print()
-        print()
-        print()
         return sum(list) / len(list)
 
     def _calculate_work_quantity_score(self, github_account):
@@ -100,10 +89,6 @@ class WorkScorer:
             work_quantity_score = self._calculate_work_quantity_score(github_account)
             work_complexity_score = self._calculate_work_complexity_score(github_account)
             work_impact_score = self._calculate_work_impact_score(github_account)
-
-            print("Work score quantity:", work_quantity_score)
-            print("Work score complexirt:", work_complexity_score)
-            print("Work score impact:", work_impact_score)
 
             work_scores.append(self._average(work_quantity_score + work_complexity_score + work_impact_score))
 

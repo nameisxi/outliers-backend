@@ -149,15 +149,28 @@ class GithubRepoCreator:
                 print(f'    {round(((i + 1) / len(repos)) * 100)}%')
 
             # TODO: migrate to user_id
-            username = user_repos['username']
-            github_account = GithubAccount.objects.get(username=username)
+            # username = user_repos['username']
+            # try:
+            #     github_account = GithubAccount.objects.get(username=username)
+            # except GithubAccount.DoesNotExist:
+            #     print(f'    [!] GithubAccount(username="{username}") not found!')
+            #     print('    Moving on...')
+            #     continue
+            
+            try:
+                github_account = GithubAccount.objects.get(user_id=user_repos['user_id'])
+            except GithubAccount.DoesNotExist:
+                print(f'    [!] GithubAccount(user_id="{user_repos["user_id"]}") not found!')
+                print('    Moving on...')
+                continue
+            
 
             for repo in user_repos['repos']:
                 # - Forks are not considered personal repos.
                 # - Repos without languages are useless to us.
-                # - Repos of size < 1000 (bytes) are useless to us.
+                # - Repos of size < 1 (kilobytes) are useless to us.
                 # - Repos with no commits during the last 3 years are useless to us.
-                if repo['fork'] or not repo['language'] or repo['size'] < 1000 or not repo['pushed_at'] or self._get_aware_date(repo['pushed_at']) < (timezone.now() - timedelta(days=(365 * 3) + 7)): 
+                if repo['fork'] or not repo['language'] or repo['size'] < 1 or not repo['pushed_at'] or self._get_aware_date(repo['pushed_at']) < (timezone.now() - timedelta(days=(365 * 3) + 7)): 
                     continue
 
                 # Create a repo with given values, or update an existing one
@@ -173,9 +186,8 @@ class GithubRepoCreator:
                 if repo['topics']:
                     self._create_repo_topic_objects(repo, github_repo, github_account)
 
-            if len(user_repos['repos']) > 0:
-                github_account.repos_scraped_at = data_scraped_at
-                github_account.save()
+            github_account.repos_scraped_at = data_scraped_at
+            github_account.save()
 
         print('    - Done')
         print(f'        GithubRepo.count() = {GithubRepo.objects.count()}')

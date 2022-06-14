@@ -1,5 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Avg
+from scores.src.scorers import popularity_scorer
 
 from users.models import Candidate
 from github.models import GithubAccount, GithubRepo
@@ -12,10 +13,13 @@ def get_accounts():
     excluded_ids = []
 
     for account in accounts:
-        if account.contributions_count == 0 or account.repos_count == 0 or account.codebase_size < account.repos_count * 1000 or account.language_count == 0:
+        if account.contributions_count == 0 or account.repos_count == 0 or account.language_count == 0:
             excluded_ids.append(account.id)
 
-    accounts = accounts.exclude(id__in=excluded_ids)
+    accounts = accounts\
+                .exclude(id__in=excluded_ids)\
+                .prefetch_related('contributions', 'repos', 'programming_languages')\
+                .all()
 
     return accounts, excluded_ids
 
@@ -46,7 +50,14 @@ def compute(request):
     normalizer = Normalizer()
     normalizer.normalize_fields(GithubAccount, accounts, fields)
 
-    candidates = Candidate.objects.exclude(github_accounts__id__in=excluded_github_ids)
+    candidates = Candidate.objects\
+                    .exclude(github_accounts__id__in=excluded_github_ids)\
+                    .prefetch_related('github_accounts')\
+                    .prefetch_related('github_accounts__contributions', 'github_accounts__repos', 'github_accounts__programming_languages')\
+                    .all()
+    Candidate.objects\
+        .filter(github_accounts__id__in=excluded_github_ids)\
+        .update(work_score=None, popularity_score=None, hireability_score=None, fit_score=None)
 
     # Compute ranking scores for Candidate objects
     scorer = Scorer()
@@ -62,19 +73,13 @@ def get_distributions(request):
     """
     Returns the distributions and the normalized versions of those distributions of the fields used to compute the ranking scores.
     """
-    # work_scores = {}
-    
-    # for candidate in Candidate.objects.exclude(work_score__isnull=True).all():
-    #     for account in candidate.github_accounts.all():
-    #         work_scores[account.user_id] = candidate.work_score
-
+    # TODO: protect this endpoint
     work_scores = []
     popularity_scores = []
 
-    for candidate in Candidate.objects.exclude(work_score__isnull=True, work_score__lt=0).all():
-        for account in candidate.github_accounts.all():
-            work_scores.append(candidate.work_score)
-            popularity_scores.append(candidate.popularity_score)
+    for candidate in Candidate.objects.filter(work_score__isnull=False, work_score__gte=0):
+        work_scores.append(candidate.work_score)
+        popularity_scores.append(candidate.popularity_score)
 
     distributions = {
         'work_score': work_scores,

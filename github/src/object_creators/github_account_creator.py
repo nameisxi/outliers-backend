@@ -32,18 +32,12 @@ class GithubAccountCreator:
                     'user': None,
                     'profile': None,
                     'pre_profile': None,
-                    'work_score': -1,
-                    'popularity_score': -1,
-                    'hireability_score': -1,
-                    'fit_score': -1,
+                    'work_score': None,
+                    'popularity_score': None,
+                    'hireability_score': None,
+                    'fit_score': None,
                 }
             )
-
-            # TODO: remove tmp solution below
-            if not user.get('followers'):
-                user['followers'] = -1
-            if not user.get('following'):
-                user['following'] = -1
 
             # Create GithubAccount object if no Github account with the user_id exists 
             fields_and_values = {

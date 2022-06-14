@@ -204,6 +204,7 @@ class GithubAPIScraper:
 
             repo = {
                 'username': account.username,
+                'user_id': account.user_id,
                 'repos': parsed_repos_data
             }
             repos.append(repo)

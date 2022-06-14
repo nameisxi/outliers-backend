@@ -29,40 +29,37 @@ class GithubMetadataCreator:
                     }
                 )
 
-    def create_organizations(self, organizations, data_scraped_at):
+    def create_organizations(self, organizations_data, data_scraped_at):
         """
         Gets a list of dictionary objects where each key represents a Github account id and every value a list of organizations from the Github REST API. This data will be used to create GithubOrganization objects.
         """
         print('Creating GithubOrganizations...')
 
-        i = 1
-        tenth = max(round(len(organizations.keys()) * 0.1), 1)
+        tenth = max(round(len(organizations_data) * 0.1), 1)
 
-        for username, orgs in organizations.items():
+        for i, organization_data in enumerate(organizations_data):
             if i % tenth == 0: 
-                print(f'    {round((i / len(organizations.keys())) * 100)}%')
-            i += 1
+                print(f'    {round((i / len(organizations_data)) * 100)}%')
             
             try:
-                account = GithubAccount.objects.get(username=username)
+                account = GithubAccount.objects.get(user_id=organization_data['user_id'])
             except GithubAccount.DoesNotExist:
-                print(f'    [!] GithubAccount(username="{username}") not found!')
+                print(f'    [!] GithubAccount(user_id="{organization_data["user_id"]}") not found!')
                 print('    Moving on...')
                 continue
                 
-            for org in orgs:
-                org, _ = self._create_organization_object(org)
-                account.organizations.add(org)
+            for organization in organization_data['organizations']:
+                organization, _ = self._create_organization_object(organization)
+                account.organizations.add(organization)
 
-            if len(orgs) > 0:
-                account.organizations_scraped_at = data_scraped_at
-                account.save()
+            account.organizations_scraped_at = data_scraped_at
+            account.save()
             
         print('    - Done:')
         print(f'        GithubOrganization.count() = {GithubOrganization.objects.count()}')
         print()
 
-    def _create_contributions_calendar_object(self, contributions_calendar):
+    def _create_contributions_calendar_object(self, user_id, contributions_calendar):
         """
         Takes a dictionary object representing a Github contributions calendar from the Github Skyline API as an input and saves it into the database as a GithubContributionsCalendar object or updates an already existing object. Created or updated object will be returned.
         """        
@@ -73,7 +70,7 @@ class GithubMetadataCreator:
             
 
         return GithubContributionsCalendar.objects.update_or_create(
-                    account__username=contributions_calendar['username'],
+                    account__user_id=user_id,
                     year=contributions_calendar['year'],
                     defaults={
                         'year': contributions_calendar['year'],
@@ -85,36 +82,34 @@ class GithubMetadataCreator:
                     }
                 )
 
-    def create_contributions_calendars(self, contributions, data_scraped_at):
+    def create_contributions_calendars(self, contributions_data, data_scraped_at):
         """
         Gets a list of dictionary objects where each key represents a Github account id and every value a list of contribution data from the past 3 years from the Github Skyline API. This data will be used to create GithubContributionsCalendar objects.
         """
         print('Creating GithubContributionsCalendars...')
 
-        i = 1
-        tenth = max(round(len(contributions.keys()) * 0.1), 1)
+        tenth = max(round(len(contributions_data) * 0.1), 1)
 
-        for username, contributions_calendars in contributions.items():
-            if i % tenth == 0: print(f'    {round((i / len(contributions.keys())) * 100)}%')
-            i += 1
+        # for username, contributions_calendars in contributions.items():
+        for i, contribution_data in enumerate(contributions_data):
+            if i % tenth == 0: print(f'    {round((i / len(contributions_data)) * 100)}%')
             
             try:
-                account = GithubAccount.objects.get(username=username)
+                account = GithubAccount.objects.get(user_id=contribution_data['user_id'])
             except GithubAccount.DoesNotExist:
-                print(f'    [!] GithubAccount(username="{username}") not found!')
+                print(f'    [!] GithubAccount(user_id="{contribution_data["user_id"]}") not found!')
                 print('    Moving on...')
                 continue
                 
-            for contributions_calendar in contributions_calendars:
+            for contributions_calendar in contribution_data['contributions']:
                 if 'contributions' not in contributions_calendar.keys(): 
                     continue
 
-                contributions_calendar, _ = self._create_contributions_calendar_object(contributions_calendar)
+                contributions_calendar, _ = self._create_contributions_calendar_object(contribution_data['user_id'], contributions_calendar)
                 account.contributions.add(contributions_calendar)
 
-            if len(contributions_calendars) > 0:
-                account.contributions_scraped_at = data_scraped_at
-                account.save()
+            account.contributions_scraped_at = data_scraped_at
+            account.save()
             
         print('    - Done:')
         print(f'        GithubContributionsCalendar.count() = {GithubContributionsCalendar.objects.count()}')
@@ -182,32 +177,28 @@ class GithubMetadataCreator:
                     account_language = self._update_field(account_language, fields_and_values)
                     account_language.save()
 
-    def create_programming_languages(self, repos, language_colors, data_scraped_at):
+    def create_programming_languages(self, repos_language_data, language_colors, data_scraped_at):
         """
         Gets a list of dictionary objects where each key represents a Github repo id and every value a list of programming languages from the Github REST API. This data will be used to create GithubRepoLanguage and GithubAccountLanguage objects that connect ProgrammingLanguage objects with GithubRepo objects and GithubAccount objects.
         """
         print('Creating GithubRepoLanguages & GithubAccountLanguages...')
 
-        i = 1
-        tenth = max(round(len(repos.keys()) * 0.1), 1)
+        tenth = max(round(len(repos_language_data) * 0.1), 1)
 
-        for repo_id, languages in repos.items():
-            if i % tenth == 0: print(f'    {round((i / len(repos.keys())) * 100)}%')
-            i += 1
+        for i, repo_language_data in enumerate(repos_language_data):
+            if i % tenth == 0: print(f'    {round((i / len(repos_language_data)) * 100)}%')
             
             try:
-                repo = GithubRepo.objects.get(repo_id=repo_id)
+                repo = GithubRepo.objects.get(repo_id=repo_language_data['repo_id'])
             except GithubRepo.DoesNotExist:
-                print(f'    [!] GithubRepo(repo_id={repo_id}) not found!')
+                print(f'    [!] GithubRepo(repo_id={repo_language_data["repo_id"]}) not found!')
                 print('    Moving on...')
                 continue
 
-            # TODO: remove the 'languages' single-key-indentation
-            self._create_language_objects(repo, languages['languages'], language_colors)
+            self._create_language_objects(repo, repo_language_data['languages'], language_colors)
 
-            if repo:
-                repo.languages_scraped_at = data_scraped_at
-                repo.save()
+            repo.languages_scraped_at = data_scraped_at
+            repo.save()
             
         print(f'    - Done:')
         print(f'        ProgrammingLanguage.count() = {ProgrammingLanguage.objects.count()}')
@@ -296,7 +287,7 @@ class GithubMetadataCreator:
 
                 if active_repo_counts[year].get(account_id) is None:
                     active_repo_counts[year][account_id] = account_language.account.repos.filter(
-                        repo_created_at__year__lte=year, 
+                        repo_created_at__year__lte=year,
                         pushed_at__year__gte=year,
                     ).count()
                 

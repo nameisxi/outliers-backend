@@ -18,10 +18,10 @@ class CandidateListTestCase(APITestCase):
     user.save()
 
     fields = {
-            'work_score': -1,
-            'popularity_score': -1,
-            'hireability_score': -1,
-            'fit_score': -1,
+            'work_score': 1,
+            'popularity_score': 1,
+            'hireability_score': 1,
+            'fit_score': 1,
     }
     candidate1 = Candidate(**fields)
     candidate1.save()
@@ -166,7 +166,7 @@ class CandidateListTestCase(APITestCase):
         force_authenticate(request, user=self.user)
         response = view(request)
 
-        assert(len(response.data) == Candidate.objects.all().count())
+        assert(len(response.data) == Candidate.objects.exclude(work_score__isnull=True).count())
 
     def test_result_size_with_limit_filter(self):
         factory = APIRequestFactory()

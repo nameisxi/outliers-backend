@@ -10,6 +10,7 @@ class GithubRepo(BaseModel):
     languages_scraped_at = models.DateTimeField(null=True)
     
     repo_id = models.BigIntegerField()
+    # TODO: add owner_user_id field
     owner_username = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
 
@@ -22,6 +23,7 @@ class GithubRepo(BaseModel):
     # normalized_watchers_count = models.FloatField(null=True)
 
     # Complexity
+    # TODO: rename to size_in_kb and get the actual size (for scoring) from language byte breakdown.
     size_in_bytes = models.BigIntegerField()
     # normalized_size_in_bytes = models.FloatField(null=True)
     # programming_languages_count = models.IntegerField()

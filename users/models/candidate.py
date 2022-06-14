@@ -12,10 +12,10 @@ class Candidate(BaseModel):
     #TODO: remove models.CASCADE
     # github_account = models.OneToOneField(GithubAccount, related_name='candidate', on_delete=models.CASCADE, null=True)
 
-    work_score = models.FloatField()
-    popularity_score = models.FloatField()
-    hireability_score = models.FloatField()
-    fit_score = models.FloatField()
+    work_score = models.FloatField(null=True)
+    popularity_score = models.FloatField(null=True)
+    hireability_score = models.FloatField(null=True)
+    fit_score = models.FloatField(null=True)
 
     class Meta:
         ordering = ['-work_score']

@@ -15,4 +15,5 @@ urlpatterns = [
     path('<int:candidate_id>/', views.GithubAccountView.as_view()),
     path('datasets/accounts/', views.GithubAccountDatasetView.as_view()),
     path('clean/', views.clean),
+    # path('dumps/accounts/', views.GithubAccountDumpView.as_view()),
 ]

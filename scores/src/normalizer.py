@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.preprocessing import QuantileTransformer#, MinMaxScaler
 
+from django.utils import timezone
 from django.core.exceptions import FieldError
 
 
@@ -31,10 +32,13 @@ class Normalizer:
             2: Scale every field's quantile distribution to the range of 0.0 to 1.0
         """
 
-        # for model_object, fields in objects_and_fields.items():
-        # objects = model_object.objects.all()
+        print('Normalizing fields...')
 
-        for field in fields:
+        tenth = max(round(len(fields) * 0.1), 1)
+
+        for i, field in enumerate(fields):
+            if (i + 1) % tenth == 0:
+                print(f'    {round(((i + 1) / len(fields)) * 100)}% [{timezone.now()}]')
             try:
                 values = model_object.objects.values_list(field, flat=True)
             except FieldError:

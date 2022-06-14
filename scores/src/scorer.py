@@ -15,6 +15,8 @@ class Scorer:
         """
         Computes ranking scores for every Candidate object.
         """
+        print('Computing ranking scores...')
+
         tenth = max(round(len(candidates) * 0.1), 1)
 
         for i, candidate in enumerate(candidates):
@@ -25,4 +27,10 @@ class Scorer:
             candidate.popularity_score = self._popularity_scorer.calculate_popularity_score(candidate)
             # candidate.hireability_score = self._hireability_scorer.calculate_hireability_score(candidate)
             # candidate.fit_score = self._fit_scorer.calculate_fit_score(candidate)
-            candidate.save()
+            # candidate.save()
+
+        Candidate.objects.bulk_update(candidates, ['work_score', 'popularity_score'])
+
+        print('    - Done')
+        print(f'        Computed scores for {len(candidates)} candidates')
+        print()

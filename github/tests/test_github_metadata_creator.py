@@ -10,10 +10,13 @@ class TestGithubMetadataCreator(TestCase):
     GithubRepoCreator({}).create_repos(repos, '2022-06-08')
 
     def _generate_github_repo_language_data(self, n_users, n_repos, n_languages):
-        data = {}
+        data = []
         for user_id in range(1, n_users + 1):
             for repo_id in range(1, n_repos + 1):
-                data[int(f'{user_id}{repo_id}')] =  { 'languages': {f'test_github_metadata_creator_language_{language_id}':1 for language_id in range(1, n_languages+1)}}
+                data.append({ 
+                    'repo_id': int(f'{user_id}{repo_id}'),
+                    'languages': {f'test_github_metadata_creator_language_{language_id}':1 for language_id in range(1, n_languages+1)}
+                })
 
         return data
 

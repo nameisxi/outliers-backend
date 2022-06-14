@@ -90,7 +90,7 @@ class TestGithubRepoCreator(TestCase):
             "clone_url": "",
             "svn_url": "",
             "homepage": None,
-            "size": 1000,
+            "size": 1,
             "stargazers_count": 0,
             "watchers_count": 0,
             "language": "test_github_repo_creator_language",
@@ -127,6 +127,7 @@ class TestGithubRepoCreator(TestCase):
         for i in range(1, n_users+1):
             repo_data.append(
                 {
+                    "user_id": i,
                     "username": f'test_{i}',
                     "repos": [self._generate_repo(i, j, n_topics) for j in range(1, n_repos+1)]
                 }

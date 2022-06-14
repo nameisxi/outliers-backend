@@ -133,18 +133,20 @@ def populate_metadata(request):
     return HttpResponse('Done')
 
 def clean(request):
+    repo_count = GithubRepo.objects.count()
+    account_count = GithubAccount.objects.count()
+
     GithubRepoLanguage.objects.filter(language_contribution=0).delete()
     GithubRepo.objects.annotate(language_count=Count("programming_languages")).filter(language_count=0).delete()
-    GithubRepo.objects.filter(size_in_bytes__lt=1000).delete()
-    GithubRepo.objects.filter(pushed_at__lt=timezone.now() - timedelta(days=(365 * 3) + 14)).delete()
+    # GithubRepo.objects.filter(pushed_at__lt=timezone.now() - timedelta(days=(365 * 3) + 14)).delete()
     GithubAccount.objects.annotate(repo_count=Count("repos")).filter(repo_count=0).delete()
 
     GithubAccountLanguage.objects.filter(language_share=0).delete()
     GithubAccount.objects.annotate(language_count=Count("programming_languages")).filter(language_count=0).delete()
 
-    GithubAccount.objects.annotate(all_contributions=Sum('contributions__contributions_count')).filter(all_contributions=0).delete()
+    # GithubAccount.objects.annotate(all_contributions=Sum('contributions__contributions_count')).filter(all_contributions=0).delete()
 
-    return HttpResponse('Done')
+    return HttpResponse(f'Deleted GithubAccount objects: {account_count - GithubAccount.objects.count()}, Deleted GithubRepo objects: {repo_count - GithubRepo.objects.count()}')
     
 
 class GithubAccountView(APIView):
@@ -157,7 +159,7 @@ class GithubAccountView(APIView):
 class GithubAccountDatasetView(APIView):
     permission_classes = [IsAdminUser]
 
-    if os.getenv('PRODUCTION') and os.getenv('PRODUCTION') == 'FALSE':
+    if os.getenv('PRODUCTION') and os.getenv('USE_CLOUD_SQL_AUTH_PROXY') and (os.getenv('PRODUCTION') == 'FALSE' or os.getenv('USE_CLOUD_SQL_AUTH_PROXY') == 'TRUE'):
         permission_classes = [AllowAny]
 
     def get(self, request):
@@ -165,3 +167,30 @@ class GithubAccountDatasetView(APIView):
         serializer = RawGithubAccountSerializer(accounts, many=True)
 
         return Response(serializer.data)
+
+# class GithubAccountDumpView(APIView):
+#     permission_classes = [IsAdminUser]
+
+#     if os.getenv('PRODUCTION') and os.getenv('USE_CLOUD_SQL_AUTH_PROXY') and (os.getenv('PRODUCTION') == 'FALSE' or os.getenv('USE_CLOUD_SQL_AUTH_PROXY') == 'TRUE'):
+#         permission_classes = [AllowAny]
+
+#     def get(self, request):
+#         accounts = GithubAccount.objects.all()
+        
+#         data = [{
+#             'id': account.user_id,
+#             'login': account.username,
+#             'name': account.name,
+#             'bio': None,
+#             'location': account.location,
+#             'email': account.email,
+#             'blog': account.website,
+#             'company': account.company,
+#             'hireable': account.hireable,
+#             'html_url': account.profile_html_url,
+#             'created_at': account.account_created_at,
+#             'followers': account.followers_count,
+#             'following': account.following_count,
+#         } for account in accounts]
+
+#         return Response(data)

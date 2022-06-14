@@ -18,6 +18,7 @@ class GithubAccount(BaseModel):
     repos_scraped_at = models.DateTimeField(null=True)
     organizations = models.ManyToManyField(GithubOrganization, related_name='members')
     organizations_scraped_at = models.DateTimeField(null=True)
+    # TODO: refactor as many to one e.g. foreignkey
     contributions = models.ManyToManyField(GithubContributionsCalendar, related_name='account')
     contributions_scraped_at = models.DateTimeField(null=True)
 
@@ -41,7 +42,7 @@ class GithubAccount(BaseModel):
     @property
     def contributions_count(self):
         contribution_count = self.contributions.filter(year__gte=(timezone.now().year - 3)).aggregate(Sum('contributions_count'))['contributions_count__sum']
-        if not contribution_count: 
+        if contribution_count is None:
             return 0
         return contribution_count
     normalized_contributions_count = models.FloatField(null=True)
@@ -53,8 +54,9 @@ class GithubAccount(BaseModel):
 
     @property
     def codebase_size(self):
-        codebase_size = self.repos.filter(pushed_at__gte=timezone.now()-timedelta(days=(365 * 3) + 7)).aggregate(Sum('size_in_bytes'))['size_in_bytes__sum']
-        if not codebase_size: 
+        # codebase_size = self.repos.filter(pushed_at__gte=timezone.now()-timedelta(days=(365 * 3) + 7)).aggregate(Sum('size_in_bytes'))['size_in_bytes__sum']
+        codebase_size = self.repos.filter(pushed_at__gte=timezone.now()-timedelta(days=(365 * 3) + 7)).aggregate(Sum('programming_languages__language_contribution'))['programming_languages__language_contribution__sum']
+        if codebase_size is None:
             return 0
         return codebase_size
     normalized_codebase_size = models.FloatField(null=True)
@@ -75,7 +77,7 @@ class GithubAccount(BaseModel):
     @property
     def stargazer_count(self):
         stargazer_count = self.repos.filter(pushed_at__gte=timezone.now()-timedelta(days=(365 * 3) + 7)).aggregate(Sum('stargazers_count'))['stargazers_count__sum']
-        if not stargazer_count: 
+        if stargazer_count is None:
             return 0
         return stargazer_count
     normalized_stargazer_count = models.FloatField(null=True)
@@ -83,7 +85,7 @@ class GithubAccount(BaseModel):
     @property
     def average_stargazer_count(self):
         avg_stargazer_count = self.repos.filter(pushed_at__gte=timezone.now()-timedelta(days=(365 * 3) + 7)).aggregate(Avg('stargazers_count'))['stargazers_count__avg']
-        if not avg_stargazer_count: 
+        if avg_stargazer_count is None:
             return 0
         return avg_stargazer_count
     normalized_average_stargazer_count = models.FloatField(null=True)
@@ -91,7 +93,7 @@ class GithubAccount(BaseModel):
     @property
     def fork_count(self):
         fork_count = self.repos.filter(pushed_at__gte=timezone.now()-timedelta(days=(365 * 3) + 7)).aggregate(Sum('forks_count'))['forks_count__sum']
-        if not fork_count: 
+        if fork_count is None:
             return 0
         return fork_count
     normalized_fork_count = models.FloatField(null=True)
@@ -99,7 +101,7 @@ class GithubAccount(BaseModel):
     @property
     def average_fork_count(self):
         avg_fork_count = self.repos.filter(pushed_at__gte=timezone.now()-timedelta(days=(365 * 3) + 7)).aggregate(Avg('forks_count'))['forks_count__avg']
-        if not avg_fork_count: 
+        if avg_fork_count is None:
             return 0
         return avg_fork_count
     normalized_average_fork_count = models.FloatField(null=True)
@@ -107,7 +109,7 @@ class GithubAccount(BaseModel):
     @property
     def watcher_count(self):
         watcher_count = self.repos.filter(pushed_at__gte=timezone.now()-timedelta(days=(365 * 3) + 7)).aggregate(Sum('watchers_count'))['watchers_count__sum']
-        if not watcher_count: 
+        if watcher_count is None:
             return 0
         return watcher_count
     normalized_watcher_count = models.FloatField(null=True)
@@ -115,7 +117,7 @@ class GithubAccount(BaseModel):
     @property
     def average_watcher_count(self):
         avg_watcher_count = self.repos.filter(pushed_at__gte=timezone.now()-timedelta(days=(365 * 3) + 7)).aggregate(Avg('watchers_count'))['watchers_count__avg']
-        if not avg_watcher_count: 
+        if avg_watcher_count is None:
             return 0
         return avg_watcher_count
     normalized_average_watcher_count = models.FloatField(null=True)
@@ -126,7 +128,7 @@ class GithubAccount(BaseModel):
     @property
     def average_codebase_size(self):
         avg_codebase_size = self.repos.filter(pushed_at__gte=timezone.now()-timedelta(days=(365 * 3) + 7)).aggregate(Avg('size_in_bytes'))['size_in_bytes__avg']
-        if not avg_codebase_size: 
+        if avg_codebase_size is None:
             return 0
         return avg_codebase_size
     normalized_average_codebase_size = models.FloatField(null=True)
@@ -134,7 +136,7 @@ class GithubAccount(BaseModel):
     @property
     def average_language_count(self):
         avg_language_count = self.repos.filter(pushed_at__gte=timezone.now()-timedelta(days=(365 * 3) + 7)).annotate(language_count=Count('programming_languages')).aggregate(Avg('language_count'))['language_count__avg']
-        if not avg_language_count: 
+        if avg_language_count is None:
             return 0
         return avg_language_count
     normalized_average_language_count = models.FloatField(null=True)
@@ -151,8 +153,8 @@ class GithubAccount(BaseModel):
     
     @property
     def follower_following_count_difference(self):
-        if self.followers_count == -1: self.followers_count = 0
-        if self.following_count == -1: self.following_count = 0
+        self.followers_count = max(self.followers_count, 0)
+        self.following_count = max(self.following_count, 0)
         return self.followers_count - self.following_count
     normalized_follower_following_count_difference = models.FloatField(null=True)
 
